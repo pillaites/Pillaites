@@ -1,8 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// 🎉 Welcome to your Prisma schema file!
+// Want to dive into the docs? Here's the link: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+// 🚀 Looking to speed up queries or scale easily with serverless or edge functions?
+// Check out Prisma Accelerate: https://pris.ly/cli/accelerate-init
 
 generator client {
   provider        = "prisma-client-js"
@@ -10,9 +10,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url = env("POSTGRES_PRISMA_URL") // uses connection pooling
-  directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+  provider  = "postgresql"
+  url       = env("POSTGRES_PRISMA_URL")  // 🌐 Connection pooling
+  directUrl = env("POSTGRES_URL_NON_POOLING")  // 🌍 Direct connection
 }
 
 model User {
@@ -34,7 +34,7 @@ model User {
   receivedNotifications Notification[] @relation("Recipient")
   issuedNotifications   Notification[] @relation("Issuer")
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now())  // ⏰ Timestamp of user creation
 
   @@map("users")
 }
@@ -69,7 +69,7 @@ model Post {
   comments            Comment[]
   linkedNotifications Notification[]
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now())  // 📝 Automatically timestamp when the post is created
 
   @@map("posts")
 }
@@ -99,7 +99,7 @@ model Comment {
   postId  String
   post    Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now())  // 🕒 Comment timestamp
 
   @@map("comments")
 }
@@ -110,7 +110,7 @@ model Like {
   postId String
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  @@unique([userId, postId])
+  @@unique([userId, postId])  // 👥 User can like a post only once
   @@map("likes")
 }
 
@@ -121,7 +121,7 @@ model Bookmark {
   postId String
   post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade)
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now())  // 📌 Bookmark created timestamp
 
   @@unique([userId, postId])
   @@map("bookmarks")
@@ -138,7 +138,7 @@ model Notification {
   type        NotificationType
   read        Boolean          @default(false)
 
-  createdAt DateTime @default(now())
+  createdAt DateTime @default(now())  // 🔔 Timestamp when notification is created
 
   @@map("notifications")
 }

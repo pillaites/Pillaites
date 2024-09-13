@@ -2,14 +2,12 @@
   "name": "nextjs-15-social-media-app",
   "version": "0.1.0",
   "private": true,
-  "scripts": { 
-  "build": "next build",
-  "postinstall": "prisma migrate deploy"
+  "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "postinstall": "prisma generate"
+    "postinstall": "prisma migrate deploy && prisma generate"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",

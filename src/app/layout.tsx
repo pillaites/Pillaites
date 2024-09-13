@@ -17,10 +17,10 @@ const geistMono = localFont({
 });
 export const metadata: Metadata = {
   title: {
-    template: "%s | Pillaites",
-    default: "Pillaites",
+    template: "%s | bugbook",
+    default: "bugbook",
   },
-  description: "The social media app for Pillaites",
+  description: "The social media app for powernerds",
 };
 export default function RootLayout({
   children,

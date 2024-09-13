@@ -8,21 +8,22 @@ import { fileRouter } from "./api/uploadthing/core";
 import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
 
-const geistSans = localFont({
-  src: "./fonts/GeistVF.woff",
-  variable: "--font-geist-sans",
+const pillaitesSans = localFont({
+  src: "./fonts/PillaitesSansVF.woff2",
+  variable: "--font-pillaites-sans",
 });
-const geistMono = localFont({
-  src: "./fonts/GeistMonoVF.woff",
-  variable: "--font-geist-mono",
+
+const pillaitesMono = localFont({
+  src: "./fonts/PillaitesMonoVF.woff2",
+  variable: "--font-pillaites-mono",
 });
 
 export const metadata: Metadata = {
   title: {
-    template: "%s | bugbook",
-    default: "bugbook",
+    template: "%s | Pillaites",
+    default: "Pillaites",
   },
-  description: "The social media app for powernerds",
+  description: "The social media platform for Pillaites College students",
 };
 
 export default function RootLayout({
@@ -32,7 +33,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
+      <body className={`${pillaitesSans.variable} ${pillaitesMono.variable}`}>
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <ReactQueryProvider>
           <ThemeProvider

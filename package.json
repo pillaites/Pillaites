@@ -3,6 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "scripts": {
+  "build": "next build",
+  "postinstall": "prisma migrate deploy"
     "dev": "next dev",
     "build": "next build",
     "start": "next start",

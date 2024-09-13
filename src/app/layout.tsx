@@ -7,25 +7,21 @@ import { extractRouterConfig } from "uploadthing/server";
 import { fileRouter } from "./api/uploadthing/core";
 import "./globals.css";
 import ReactQueryProvider from "./ReactQueryProvider";
-
-const pillaitesSans = localFont({
-  src: "./fonts/PillaitesSansVF.woff2",
-  variable: "--font-pillaites-sans",
+const geistSans = localFont({
+  src: "./fonts/GeistVF.woff",
+  variable: "--font-geist-sans",
 });
-
-const pillaitesMono = localFont({
-  src: "./fonts/PillaitesMonoVF.woff2",
-  variable: "--font-pillaites-mono",
+const geistMono = localFont({
+  src: "./fonts/GeistMonoVF.woff",
+  variable: "--font-geist-mono",
 });
-
 export const metadata: Metadata = {
   title: {
     template: "%s | Pillaites",
     default: "Pillaites",
   },
-  description: "The social media platform for Pillaites College students",
+  description: "The social media app for Pillaites",
 };
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${pillaitesSans.variable} ${pillaitesMono.variable}`}>
+      <body className={${geistSans.variable} ${geistMono.variable}}>
         <NextSSRPlugin routerConfig={extractRouterConfig(fileRouter)} />
         <ReactQueryProvider>
           <ThemeProvider

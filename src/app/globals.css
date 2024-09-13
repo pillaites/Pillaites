@@ -1,0 +1,102 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "~stream-chat-react/dist/css/v2/index.css";
+
+@layer base {
+  :root {
+    --background: 60, 30%, 96%;
+    --foreground: 20, 10%, 20%;
+    --card: 60, 30%, 98%;
+    --card-foreground: 20, 10%, 20%;
+    --popover: 60, 30%, 98%;
+    --popover-foreground: 20, 10%, 20%;
+    --primary: 45, 100%, 50%;
+    --primary-foreground: 20, 10%, 20%;
+    --secondary: 40, 30%, 90%;
+    --secondary-foreground: 20, 10%, 20%;
+    --muted: 40, 20%, 85%;
+    --muted-foreground: 20, 10%, 40%;
+    --accent: 35, 100%, 60%;
+    --accent-foreground: 20, 10%, 20%;
+    --destructive: 0, 85%, 60%;
+    --destructive-foreground: 60, 30%, 96%;
+    --border: 40, 15%, 80%;
+    --input: 40, 15%, 80%;
+    --ring: 45, 100%, 50%;
+    --radius: 0.25rem;
+  }
+
+  .dark {
+    --background: 20, 10%, 10%;
+    --foreground: 60, 30%, 96%;
+    --card: 20, 10%, 15%;
+    --card-foreground: 60, 30%, 96%;
+    --popover: 20, 10%, 15%;
+    --popover-foreground: 60, 30%, 96%;
+    --primary: 45, 100%, 50%;
+    --primary-foreground: 20, 10%, 20%;
+    --secondary: 40, 15%, 25%;
+    --secondary-foreground: 60, 30%, 96%;
+    --muted: 40, 15%, 25%;
+    --muted-foreground: 60, 30%, 70%;
+    --accent: 35, 100%, 60%;
+    --accent-foreground: 20, 10%, 20%;
+    --destructive: 0, 85%, 60%;
+    --destructive-foreground: 60, 30%, 96%;
+    --border: 40, 15%, 25%;
+    --input: 40, 15%, 25%;
+    --ring: 45, 100%, 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Courier New', Courier, monospace;
+  }
+}
+
+.str-chat {
+  --str-chat__font-family: 'Courier New', Courier, monospace;
+  --str-chat__primary-color: theme(colors.primary.DEFAULT);
+  --str-chat__on-primary-color: theme(colors.primary.foreground);
+  --str-chat__active-primary-color: theme(colors.primary.foreground);
+  --str-chat__primary-color-low-emphasis: color-mix(
+    in hsl,
+    hsl(var(--primary)) 10%,
+    transparent
+  );
+  --str-chat__background-color: theme(colors.card.DEFAULT);
+  --str-chat__secondary-background-color: theme(colors.card.DEFAULT);
+  --str-chat__message-textarea-background-color: theme(colors.background);
+  --str-chat__channel-preview-active-background-color: theme(
+    colors.accent.DEFAULT
+  );
+  --str-chat__channel-preview-hover-background-color: var(
+    --str-chat__channel-preview-active-background-color
+  );
+  --str-chat__secondary-surface-color: theme(colors.muted.DEFAULT);
+  --str-chat__own-message-bubble-color: theme(colors.primary.foreground);
+  --str-chat__primary-surface-color: theme(colors.primary.DEFAULT);
+  --str-chat__primary-surface-color-low-emphasis: var(
+    --str-chat__primary-color-low-emphasis
+  );
+  --str-chat__disabled-color: theme(colors.muted.DEFAULT);
+  --str-chat__cta-button-border-radius: var(--radius);
+}
+
+.str-chat-channel-list {
+  border-right: none;
+}
+
+.str-chat__channel-list-react .str-chat__channel-list-messenger-react {
+  padding-bottom: 0;
+}
+
+.str-chat__channel-search-bar-button--exit-search {
+  display: none;
+}

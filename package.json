@@ -2,8 +2,7 @@
   "name": "nextjs-15-social-media-app",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "scripts": {
+  "scripts": { 
   "build": "next build",
   "postinstall": "prisma migrate deploy"
     "dev": "next dev",

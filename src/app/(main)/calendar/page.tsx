@@ -6,13 +6,14 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSam
 interface Event {
   id: string;
   title: string;
-  date: Date;
+  date: string; // Change to string to match API data format
   description: string;
 }
 
 const CalendarPage: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchEvents();
@@ -27,10 +28,11 @@ const CalendarPage: React.FC = () => {
       const data = await response.json();
       setEvents(data.map((event: Event) => ({
         ...event,
-        date: new Date(event.date)
+        date: new Date(event.date) // Convert date string to Date object
       })));
     } catch (error) {
       console.error('Error fetching events:', error);
+      setError('Error fetching events. Please try again later.');
     }
   };
 
@@ -106,7 +108,9 @@ const CalendarPage: React.FC = () => {
       <div className="bg-[hsl(var(--card))] p-4 rounded-lg dark:bg-[hsl(var(--card))]">
         <h3 className="text-xl font-semibold mb-2 text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">Upcoming Events</h3>
         <ul>
-          {getUpcomingEvents().length > 0 ? (
+          {error ? (
+            <li className="text-center text-red-500">{error}</li>
+          ) : getUpcomingEvents().length > 0 ? (
             getUpcomingEvents().map(event => (
               <li key={event.id} className="mb-2 bg-[hsl(var(--popover))] p-2 rounded dark:bg-[hsl(var(--popover))]">
                 <div className="font-semibold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">{event.title}</div>

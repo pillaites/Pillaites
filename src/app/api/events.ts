@@ -11,18 +11,22 @@ interface Event {
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
+    // Adjust path to point to src/api/events.txt
+    const filePath = path.join(process.cwd(), 'src/api/events.txt');
+    console.log(`Reading events from: ${filePath}`);
+
     // Read the contents of the events.txt file
-    const filePath = path.join(process.cwd(), 'pages/api/events.txt');
     const fileContents = fs.readFileSync(filePath, 'utf8');
+    console.log(`File contents: ${fileContents}`);
 
     // Parse the file contents into an array of events
-    const events: Event[] = fileContents.trim().split('\n').map((line, index) => {
-      const [title, date, description] = line.split('|').map(part => part.trim());
+    const events: Event[] = fileContents.split('\n').map((line, index) => {
+      const [title, date, description] = line.split('|');
       return {
         id: String(index + 1),
-        title,
-        date,
-        description,
+        title: title.trim(),
+        date: date.trim(),
+        description: description.trim(),
       };
     });
 

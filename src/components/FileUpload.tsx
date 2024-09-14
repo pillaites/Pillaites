@@ -1,5 +1,6 @@
 import { useState } from 'react';
-// Adjust the import path for UploadThing according to your setup
+
+// Adjust the import based on the actual export from `uploadthing`
 import { UploadThing } from 'uploadthing'; 
 
 interface FileUploadProps {
@@ -27,7 +28,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onUpload }) => {
     setError(null);
 
     try {
-      // Use UploadThing to handle the file upload
+      // Ensure correct usage based on package documentation
       const { url } = await UploadThing.upload(file);
 
       // Call the onUpload callback with the file URL

@@ -1,46 +1,47 @@
-'use client';
+'use client'; 
 
 import { useState, useEffect } from 'react';
 import FileUpload from './FileUpload';  // Adjust import path
 
-interface Candidate {
-  id: string;  // Adjust as per actual API response field
-  name: string;
-  imageUrl?: string;  // Add imageUrl to Candidate interface
+interface User {
+  id: string;
+  username: string;
+  displayName: string;
+  avatarUrl?: string;
 }
 
 interface VotingPageProps {
-  params: { electionId: string };  // Adjusted prop definition to match dynamic routing
+  params: { electionId: string };
 }
 
 export default function VotingPage({ params }: VotingPageProps) {
-  const { electionId } = params;  // Destructure electionId from params
-  const [candidates, setCandidates] = useState<Candidate[]>([]);
-  const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
+  const { electionId } = params;
+  const [users, setUsers] = useState<User[]>([]);
+  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
-  const [newCandidateName, setNewCandidateName] = useState<string>("");
-  const [newCandidateImageUrl, setNewCandidateImageUrl] = useState<string | null>(null);  // State for new candidate image URL
+  const [newUserName, setNewUserName] = useState<string>("");
+  const [newUserImageUrl, setNewUserImageUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchCandidates() {
+    async function fetchUsers() {
       try {
-        const res = await fetch(`/api/elections/${electionId}`);
+        const res = await fetch(`/api/users`);
         if (!res.ok) {
-          throw new Error("Failed to fetch candidates.");
+          throw new Error("Failed to fetch users.");
         }
         const data = await res.json();
-        setCandidates(data.results);
+        setUsers(data.results);
       } catch (error: any) {
-        setMessage(error.message || "Error fetching candidates.");
+        setMessage(error.message || "Error fetching users.");
       }
     }
 
-    fetchCandidates();
-  }, [electionId]);
+    fetchUsers();
+  }, []);
 
   const handleVote = async () => {
-    if (!selectedCandidate) {
-      setMessage("Please select a candidate.");
+    if (!selectedUser) {
+      setMessage("Please select a user.");
       return;
     }
 
@@ -50,7 +51,7 @@ export default function VotingPage({ params }: VotingPageProps) {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ candidateId: selectedCandidate }),
+        body: JSON.stringify({ userId: selectedUser }),
       });
 
       if (!res.ok) {
@@ -64,71 +65,71 @@ export default function VotingPage({ params }: VotingPageProps) {
     }
   };
 
-  const handleAddCandidate = async () => {
-    if (!newCandidateName.trim()) {
-      setMessage("Candidate name cannot be empty.");
+  const handleAddUser = async () => {
+    if (!newUserName.trim()) {
+      setMessage("User name cannot be empty.");
       return;
     }
 
     try {
-      const res = await fetch(`/api/elections/${electionId}/candidates`, {
+      const res = await fetch(`/api/users`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          name: newCandidateName,
-          imageUrl: newCandidateImageUrl,  // Include imageUrl in the request body
+          username: newUserName,
+          avatarUrl: newUserImageUrl,
         }),
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Error adding candidate.");
+        throw new Error(errorData.error || "Error adding user.");
       }
 
-      const newCandidate = await res.json();
-      setCandidates((prev) => [...prev, newCandidate]);
-      setNewCandidateName("");  // Clear the input after adding
-      setNewCandidateImageUrl(null);  // Clear the image URL after adding
-      setMessage("Candidate added successfully!");
+      const newUser = await res.json();
+      setUsers((prev) => [...prev, newUser]);
+      setNewUserName("");
+      setNewUserImageUrl(null);
+      setMessage("User added successfully!");
     } catch (error: any) {
-      setMessage(error.message || "Error adding candidate.");
+      setMessage(error.message || "Error adding user.");
     }
   };
 
   return (
     <div>
-      <h1>Vote for your favorite candidate</h1>
-      {candidates.length > 0 ? (
-        candidates.map((candidate) => (
-          <div key={candidate.id}>
+      <h1>Vote for Your Favorite User</h1>
+      {users.length > 0 ? (
+        users.map((user) => (
+          <div key={user.id}>
             <label>
               <input
                 type="radio"
-                name="candidate"
-                value={candidate.id}
-                onChange={() => setSelectedCandidate(candidate.id)}
+                name="user"
+                value={user.id}
+                onChange={() => setSelectedUser(user.id)}
               />
-              {candidate.name}
-              {candidate.imageUrl && <img src={candidate.imageUrl} alt={candidate.name} width={100} />}  {/* Display candidate image */}
+              {user.displayName || user.username}
+              {user.avatarUrl && <img src={user.avatarUrl} alt={user.username} width={100} />} {/* Display user image */}
             </label>
           </div>
         ))
       ) : (
-        <p>No candidates available.</p>
+        <p>No users available.</p>
       )}
       <button onClick={handleVote}>Cast Vote</button>
 
-      <h2>Add a New Candidate</h2>
+      <h2>Add a New User</h2>
       <input
         type="text"
-        value={newCandidateName}
-        onChange={(e) => setNewCandidateName(e.target.value)}
-        placeholder="Enter candidate name"
+        value={newUserName}
+        onChange={(e) => setNewUserName(e.target.value)}
+        placeholder="Enter user name"
       />
-      <FileUpload onUpload={setNewCandidateImageUrl} />  {/* Use FileUpload component */}
-      <button onClick={handleAddCandidate}>Add Candidate</button>
+      <FileUpload onUpload={setNewUserImageUrl} /> {/* Use FileUpload component */}
+      <button onClick={handleAddUser}>Add User</button>
 
       {message && <p>{message}</p>}
     </div>

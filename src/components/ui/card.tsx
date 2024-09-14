@@ -4,7 +4,7 @@ import React from 'react';
 export const Card: React.FC<{ className?: string }> = ({ className, children }) => {
   return (
     <div
-      className={`bg-card text-card-foreground border border-border rounded-lg shadow-md p-4 ${className}`}
+      className={`bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}
     >
       {children}
     </div>
@@ -26,13 +26,8 @@ export const CardHeader: React.FC<{ title: string; subtitle?: string }> = ({
 
 // CardContent component supporting both light and dark modes
 export const CardContent: React.FC<{ className?: string }> = ({ className, children }) => {
-  return <div className={`text-foreground ${className}`}>{children}</div>;
-};
-
-// CardFooter component for optional footer content
-export const CardFooter: React.FC<{ className?: string }> = ({ className, children }) => {
   return (
-    <div className={`mt-4 border-t border-border pt-2 text-muted-foreground ${className}`}>
+    <div className={`text-foreground ${className}`}>
       {children}
     </div>
   );

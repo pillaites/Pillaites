@@ -58,20 +58,20 @@ const CalendarPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">
-      <h1 className="text-3xl font-bold mb-4 text-[hsl(var(--primary))]">Calendar</h1>
+    <div className="container mx-auto p-4 bg-[hsl(var(--card))] text-[hsl(var(--foreground))] dark:bg-[hsl(var(--card))] dark:text-[hsl(var(--foreground))]">
+      <h1 className="text-3xl font-bold mb-4 text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">Calendar</h1>
 
       <div className="flex justify-between items-center mb-4">
         <button 
           onClick={prevMonth} 
-          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] transition-colors"
+          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] dark:bg-[hsl(var(--primary))] dark:text-[hsl(var(--primary-foreground))] dark:hover:bg-[hsl(var(--primary-foreground))]"
         >
           Previous Month
         </button>
-        <h2 className="text-xl font-semibold text-[hsl(var(--primary))]">{format(currentDate, 'MMMM yyyy')}</h2>
+        <h2 className="text-xl font-semibold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">{format(currentDate, 'MMMM yyyy')}</h2>
         <button 
           onClick={nextMonth} 
-          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] transition-colors"
+          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] dark:bg-[hsl(var(--primary))] dark:text-[hsl(var(--primary-foreground))] dark:hover:bg-[hsl(var(--primary-foreground))]"
         >
           Next Month
         </button>
@@ -79,7 +79,7 @@ const CalendarPage: React.FC = () => {
 
       <div className="grid grid-cols-7 gap-2 mb-4">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="text-center font-bold text-[hsl(var(--primary))]">
+          <div key={day} className="text-center font-bold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">
             {day}
           </div>
         ))}
@@ -90,11 +90,12 @@ const CalendarPage: React.FC = () => {
               isSameMonth(day, currentDate)
                 ? 'bg-[hsl(var(--card))] text-[hsl(var(--primary))]'
                 : 'bg-[hsl(var(--popover))] text-[hsl(var(--secondary))]'
-            } ${isSameDay(day, new Date()) ? 'border-[hsl(var(--accent))] font-bold' : 'border-[hsl(var(--border))]'}`}
+            } ${isSameDay(day, new Date()) ? 'border-[hsl(var(--accent))] font-bold' : 'border-[hsl(var(--border))]'}
+            dark:bg-[hsl(var(--card))] dark:text-[hsl(var(--primary))] dark:border-[hsl(var(--border))]`}
           >
             <div className="text-right">{format(day, 'd')}</div>
             {getEventsForDate(day).map(event => (
-              <div key={event.id} className="text-xs bg-[hsl(var(--popover))] p-1 mt-1 rounded text-[hsl(var(--primary))]">
+              <div key={event.id} className="text-xs bg-[hsl(var(--popover))] p-1 mt-1 rounded text-[hsl(var(--primary))] dark:bg-[hsl(var(--popover))] dark:text-[hsl(var(--primary))]">
                 {event.title}
               </div>
             ))}
@@ -102,14 +103,14 @@ const CalendarPage: React.FC = () => {
         ))}
       </div>
 
-      <div className="bg-[hsl(var(--card))] p-4 rounded-lg">
-        <h3 className="text-xl font-semibold mb-2 text-[hsl(var(--primary))]">Upcoming Events</h3>
+      <div className="bg-[hsl(var(--card))] p-4 rounded-lg dark:bg-[hsl(var(--card))]">
+        <h3 className="text-xl font-semibold mb-2 text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">Upcoming Events</h3>
         <ul>
           {getUpcomingEvents().map(event => (
-            <li key={event.id} className="mb-2 bg-[hsl(var(--popover))] p-2 rounded">
-              <div className="font-semibold text-[hsl(var(--primary))]">{event.title}</div>
-              <div className="text-[hsl(var(--secondary))]">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
-              <div className="text-sm text-[hsl(var(--muted))]">{event.description}</div>
+            <li key={event.id} className="mb-2 bg-[hsl(var(--popover))] p-2 rounded dark:bg-[hsl(var(--popover))]">
+              <div className="font-semibold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">{event.title}</div>
+              <div className="text-[hsl(var(--secondary))] dark:text-[hsl(var(--secondary))]">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
+              <div className="text-sm text-[hsl(var(--muted))] dark:text-[hsl(var(--muted))]">{event.description}</div>
             </li>
           ))}
         </ul>

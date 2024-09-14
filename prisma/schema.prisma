@@ -140,7 +140,8 @@ model Election {
 model Candidate {
   id          String      @id @default(uuid())
   name        String
-  party       String      // Add this line
+  party       String      // Party field added
+  profilePhoto String?   // Profile photo URL
   electionId  String
   election    Election    @relation(fields: [electionId], references: [id])
   votes       Vote[]
@@ -156,7 +157,6 @@ model Vote {
   
   @@unique([userId, electionId]) // Ensure each user can only vote once per election
 }
-
 
 model Notification {
   id          String           @id @default(cuid())

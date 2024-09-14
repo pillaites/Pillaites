@@ -1,9 +1,9 @@
 import TrendsSidebar from "@/components/TrendsSidebar";
 import { Metadata } from "next";
-import Voting from "./Voting"; // Import your Voting component here
+import Voting from "./Voting";
 
 export const metadata: Metadata = {
-  title: "Voting", // Updated page title to "Voting"
+  title: "Voting",
 };
 
 export default function Page() {
@@ -11,9 +11,9 @@ export default function Page() {
     <main className="flex w-full min-w-0 gap-5">
       <div className="w-full min-w-0 space-y-5">
         <div className="rounded-2xl bg-card p-5 shadow-sm">
-          <h1 className="text-center text-2xl font-bold">Voting</h1> {/* Updated heading */}
+          <h1 className="text-center text-2xl font-bold">Voting</h1>
         </div>
-        <Voting /> {/* Using the Voting component instead of Bookmarks */}
+        <Voting />
       </div>
       <TrendsSidebar />
     </main>

@@ -10,15 +10,15 @@ export interface Event {
   export const events: Event[] = [
     {
       id: '1',
-      title: 'Event One',
-      description: 'Description for Event One',
+      title: 'Hackathon',
+      description: 'Hackathon at Pillai Mini',
       date: '2024-09-20T10:00:00Z',
     },
     {
       id: '2',
-      title: 'Event Two',
-      description: 'Description for Event Two',
-      date: '2024-09-25T14:00:00Z',
+      title: 'Celebration',
+      description: 'Celebration at Mini College',
+      date: '2024-09-22T14:00:00Z',
     },
     // Add more events as needed
   ];

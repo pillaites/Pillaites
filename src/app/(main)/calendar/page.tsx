@@ -14,7 +14,7 @@ interface Event {
 }
 
 const CalendarPage: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState<Date>(new Date());
   const [events, setEvents] = useState<Event[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -66,7 +66,7 @@ const CalendarPage: React.FC = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+        <CardHeader className="flex flex-row items-center justify-between pb-2">
           <Button variant="outline" size="icon" onClick={prevMonth}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -86,9 +86,7 @@ const CalendarPage: React.FC = () => {
               <div
                 key={day.toISOString()}
                 className={`p-2 border rounded-lg text-center ${
-                  isSameMonth(day, currentDate)
-                    ? 'bg-background text-foreground'
-                    : 'bg-muted text-muted-foreground'
+                  isSameMonth(day, currentDate) ? 'bg-background text-foreground' : 'bg-muted text-muted-foreground'
                 } ${isSameDay(day, new Date()) ? 'border-primary font-bold' : 'border-border'}`}
               >
                 <div>{format(day, 'd')}</div>

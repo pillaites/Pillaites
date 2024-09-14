@@ -1,7 +1,13 @@
+// src/components/Card.tsx
+
 import React from 'react';
 
-// Card component supporting both light and dark modes
-export const Card: React.FC<{ className?: string; children?: React.ReactNode }> = ({ className, children }) => {
+interface CardProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export const Card: React.FC<CardProps> = ({ className, children }) => {
   return (
     <div
       className={`bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}
@@ -11,21 +17,31 @@ export const Card: React.FC<{ className?: string; children?: React.ReactNode }> 
   );
 };
 
-// CardHeader component supporting both light and dark modes
-export const CardHeader: React.FC<{ title: string; subtitle?: string }> = ({
+interface CardHeaderProps {
+  title: string;
+  subtitle?: string;
+  className?: string;
+}
+
+export const CardHeader: React.FC<CardHeaderProps> = ({
   title,
   subtitle,
+  className,
 }) => {
   return (
-    <div className="mb-4">
+    <div className={`mb-4 ${className}`}>
       <h2 className="text-lg font-semibold text-foreground">{title}</h2>
       {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );
 };
 
-// CardContent component supporting both light and dark modes
-export const CardContent: React.FC<{ className?: string; children?: React.ReactNode }> = ({ className, children }) => {
+interface CardContentProps {
+  className?: string;
+  children?: React.ReactNode;
+}
+
+export const CardContent: React.FC<CardContentProps> = ({ className, children }) => {
   return (
     <div className={`text-foreground ${className}`}>
       {children}

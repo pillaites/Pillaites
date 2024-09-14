@@ -1,7 +1,6 @@
 'use client'; 
 
 import { useState, useEffect } from 'react';
-import FileUpload from './FileUpload';  // Adjust import path
 
 interface User {
   id: string;
@@ -20,7 +19,7 @@ export default function VotingPage({ params }: VotingPageProps) {
   const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
   const [newUserName, setNewUserName] = useState<string>("");
-  const [newUserImageUrl, setNewUserImageUrl] = useState<string | null>(null);
+  const [newUserDisplayName, setNewUserDisplayName] = useState<string>("");
 
   useEffect(() => {
     async function fetchUsers() {
@@ -65,9 +64,9 @@ export default function VotingPage({ params }: VotingPageProps) {
     }
   };
 
-  const handleAddUser = async () => {
-    if (!newUserName.trim()) {
-      setMessage("User name cannot be empty.");
+  const handleRegisterCandidate = async () => {
+    if (!newUserName.trim() || !newUserDisplayName.trim()) {
+      setMessage("Username and display name cannot be empty.");
       return;
     }
 
@@ -79,22 +78,22 @@ export default function VotingPage({ params }: VotingPageProps) {
         },
         body: JSON.stringify({
           username: newUserName,
-          avatarUrl: newUserImageUrl,
+          displayName: newUserDisplayName,
         }),
       });
 
       if (!res.ok) {
         const errorData = await res.json();
-        throw new Error(errorData.error || "Error adding user.");
+        throw new Error(errorData.error || "Error registering candidate.");
       }
 
       const newUser = await res.json();
       setUsers((prev) => [...prev, newUser]);
       setNewUserName("");
-      setNewUserImageUrl(null);
-      setMessage("User added successfully!");
+      setNewUserDisplayName("");
+      setMessage("Candidate registered successfully!");
     } catch (error: any) {
-      setMessage(error.message || "Error adding user.");
+      setMessage(error.message || "Error registering candidate.");
     }
   };
 
@@ -121,15 +120,20 @@ export default function VotingPage({ params }: VotingPageProps) {
       )}
       <button onClick={handleVote}>Cast Vote</button>
 
-      <h2>Add a New User</h2>
+      <h2>Register as a Candidate</h2>
       <input
         type="text"
         value={newUserName}
         onChange={(e) => setNewUserName(e.target.value)}
-        placeholder="Enter user name"
+        placeholder="Enter username"
       />
-      <FileUpload onUpload={setNewUserImageUrl} /> {/* Use FileUpload component */}
-      <button onClick={handleAddUser}>Add User</button>
+      <input
+        type="text"
+        value={newUserDisplayName}
+        onChange={(e) => setNewUserDisplayName(e.target.value)}
+        placeholder="Enter display name"
+      />
+      <button onClick={handleRegisterCandidate}>Register</button>
 
       {message && <p>{message}</p>}
     </div>

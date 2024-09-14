@@ -1,7 +1,7 @@
 import React from 'react';
 
 // Card component supporting both light and dark modes
-export const Card: React.FC<{ className?: string }> = ({ className, children }) => {
+export const Card: React.FC<{ className?: string; children?: React.ReactNode }> = ({ className, children }) => {
   return (
     <div
       className={`bg-card text-card-foreground border border-border rounded-lg shadow-lg p-4 ${className}`}
@@ -25,7 +25,7 @@ export const CardHeader: React.FC<{ title: string; subtitle?: string }> = ({
 };
 
 // CardContent component supporting both light and dark modes
-export const CardContent: React.FC<{ className?: string }> = ({ className, children }) => {
+export const CardContent: React.FC<{ className?: string; children?: React.ReactNode }> = ({ className, children }) => {
   return (
     <div className={`text-foreground ${className}`}>
       {children}

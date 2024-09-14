@@ -6,7 +6,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSam
 interface Event {
   id: string;
   title: string;
-  date: string;  // Using string for simplicity, conversion to Date handled later
+  date: Date;  // Using string for simplicity, conversion to Date handled later
   description: string;
 }
 

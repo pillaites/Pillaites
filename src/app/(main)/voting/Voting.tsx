@@ -1,6 +1,6 @@
 "use client";  
-import React, { useState } from 'react'; 
-import { Button } from 'your-ui-library'; 
+import React, { useState } from 'react';
+import { Button } from '@mui/material'; // Update this if you're using a different library
 
 const Voting: React.FC = () => {
     const [newCandidateName, setNewCandidateName] = useState('');
@@ -18,7 +18,7 @@ const Voting: React.FC = () => {
                 onChange={(e) => setNewCandidateName(e.target.value)}
                 placeholder="Enter candidate name"
             />
-            <Button variant="default" onClick={handleRegisterCandidate}>
+            <Button variant="contained" onClick={handleRegisterCandidate}>
                 Register
             </Button>
         </div>

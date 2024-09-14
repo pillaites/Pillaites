@@ -58,35 +58,37 @@ const CalendarPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold mb-4">Calendar</h1>
+    <div className="container mx-auto p-4 bg-yellow-50">
+      <h1 className="text-3xl font-bold mb-4 text-yellow-800">Calendar</h1>
 
       <div className="flex justify-between items-center mb-4">
-        <button onClick={prevMonth} className="bg-blue-500 text-white px-4 py-2 rounded">
+        <button onClick={prevMonth} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors">
           Previous Month
         </button>
-        <h2 className="text-xl font-semibold">{format(currentDate, 'MMMM yyyy')}</h2>
-        <button onClick={nextMonth} className="bg-blue-500 text-white px-4 py-2 rounded">
+        <h2 className="text-xl font-semibold text-yellow-800">{format(currentDate, 'MMMM yyyy')}</h2>
+        <button onClick={nextMonth} className="bg-yellow-500 text-white px-4 py-2 rounded hover:bg-yellow-600 transition-colors">
           Next Month
         </button>
       </div>
 
       <div className="grid grid-cols-7 gap-2 mb-4">
         {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="text-center font-bold">
+          <div key={day} className="text-center font-bold text-yellow-800">
             {day}
           </div>
         ))}
         {daysInMonth.map(day => (
           <div
             key={day.toISOString()}
-            className={`p-2 border ${
-              isSameMonth(day, currentDate) ? 'bg-white' : 'bg-gray-100'
-            } ${isSameDay(day, new Date()) ? 'border-blue-500' : ''}`}
+            className={`p-2 border rounded ${
+              isSameMonth(day, currentDate)
+                ? 'bg-yellow-100 text-yellow-800'
+                : 'bg-yellow-50 text-yellow-600'
+            } ${isSameDay(day, new Date()) ? 'border-yellow-500 font-bold' : 'border-yellow-200'}`}
           >
             <div className="text-right">{format(day, 'd')}</div>
             {getEventsForDate(day).map(event => (
-              <div key={event.id} className="text-xs bg-blue-100 p-1 mt-1 rounded">
+              <div key={event.id} className="text-xs bg-yellow-200 p-1 mt-1 rounded text-yellow-800">
                 {event.title}
               </div>
             ))}
@@ -94,14 +96,14 @@ const CalendarPage: React.FC = () => {
         ))}
       </div>
 
-      <div>
-        <h3 className="text-xl font-semibold mb-2">Upcoming Events</h3>
+      <div className="bg-yellow-100 p-4 rounded-lg">
+        <h3 className="text-xl font-semibold mb-2 text-yellow-800">Upcoming Events</h3>
         <ul>
           {getUpcomingEvents().map(event => (
-            <li key={event.id} className="mb-2">
-              <div className="font-semibold">{event.title}</div>
-              <div>{format(new Date(event.date), 'MMMM d, yyyy')}</div>
-              <div className="text-sm text-gray-600">{event.description}</div>
+            <li key={event.id} className="mb-2 bg-yellow-50 p-2 rounded">
+              <div className="font-semibold text-yellow-800">{event.title}</div>
+              <div className="text-yellow-600">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
+              <div className="text-sm text-yellow-700">{event.description}</div>
             </li>
           ))}
         </ul>

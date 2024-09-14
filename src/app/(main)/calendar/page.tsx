@@ -66,7 +66,7 @@ const CalendarPage: React.FC = () => {
       {error && <p className="text-red-500">{error}</p>}
 
       <Card>
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
+        <div className="flex flex-row items-center justify-between pb-2">
           <Button variant="outline" size="icon" onClick={prevMonth}>
             <ChevronLeft className="h-4 w-4" />
           </Button>
@@ -74,7 +74,7 @@ const CalendarPage: React.FC = () => {
           <Button variant="outline" size="icon" onClick={nextMonth}>
             <ChevronRight className="h-4 w-4" />
           </Button>
-        </CardHeader>
+        </div>
         <CardContent>
           <div className="grid grid-cols-7 gap-2 mb-4">
             {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
@@ -102,9 +102,9 @@ const CalendarPage: React.FC = () => {
       </Card>
 
       <Card>
-        <CardHeader>
+        <div className="pb-2">
           <h3 className="text-xl font-semibold">Upcoming Events</h3>
-        </CardHeader>
+        </div>
         <CardContent>
           {getUpcomingEvents().length > 0 ? (
             <ul className="space-y-2">

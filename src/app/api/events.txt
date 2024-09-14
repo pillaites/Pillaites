@@ -1,3 +1,2 @@
- Hackathon|2024-09-22T10:00:00Z|Hackathon at Pillai
 Event Title 2|2024-09-20T09:00:00Z|Description of Event 2
 Event Title 3|2024-09-25T14:00:00Z|Description of Event 3

@@ -1,4 +1,5 @@
 
+import { useUploadThing } from "@/lib/uploadthing";
 import React, { useState } from 'react';
 
 interface FileUploadProps {

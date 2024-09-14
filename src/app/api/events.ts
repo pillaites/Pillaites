@@ -16,13 +16,13 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     const fileContents = fs.readFileSync(filePath, 'utf8');
 
     // Parse the file contents into an array of events
-    const events: Event[] = fileContents.split('\n').map((line, index) => {
-      const [title, date, description] = line.split('|');
+    const events: Event[] = fileContents.trim().split('\n').map((line, index) => {
+      const [title, date, description] = line.split('|').map(part => part.trim());
       return {
         id: String(index + 1),
-        title: title.trim(),
-        date: date.trim(),
-        description: description.trim(),
+        title,
+        date,
+        description,
       };
     });
 

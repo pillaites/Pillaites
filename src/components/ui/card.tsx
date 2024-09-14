@@ -1,55 +1,30 @@
-// src/components/ui/card.tsx
-
 import React from 'react';
 
-interface CardProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const Card: React.FC<CardProps> = ({ children, className = '' }) => {
+// Card component supporting both light and dark modes
+export const Card: React.FC<{ className?: string }> = ({ className, children }) => {
   return (
-    <div className={`bg-white dark:bg-gray-800 shadow-md rounded-lg overflow-hidden ${className}`}>
+    <div
+      className={`bg-card text-card-foreground border border-border rounded-lg shadow p-4 ${className}`}
+    >
       {children}
     </div>
   );
 };
 
-interface CardHeaderProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const CardHeader: React.FC<CardHeaderProps> = ({ children, className = '' }) => {
+// CardHeader component supporting both light and dark modes
+export const CardHeader: React.FC<{ title: string; subtitle?: string }> = ({
+  title,
+  subtitle,
+}) => {
   return (
-    <div className={`px-4 py-5 sm:px-6 border-b border-gray-200 dark:border-gray-700 ${className}`}>
-      {children}
+    <div className="mb-4">
+      <h2 className="text-lg font-semibold text-foreground">{title}</h2>
+      {subtitle && <p className="text-sm text-muted-foreground">{subtitle}</p>}
     </div>
   );
 };
 
-interface CardContentProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const CardContent: React.FC<CardContentProps> = ({ children, className = '' }) => {
-  return (
-    <div className={`px-4 py-5 sm:p-6 ${className}`}>
-      {children}
-    </div>
-  );
-};
-
-interface CardFooterProps {
-  children: React.ReactNode;
-  className?: string;
-}
-
-export const CardFooter: React.FC<CardFooterProps> = ({ children, className = '' }) => {
-  return (
-    <div className={`px-4 py-4 sm:px-6 border-t border-gray-200 dark:border-gray-700 ${className}`}>
-      {children}
-    </div>
-  );
+// CardContent component supporting both light and dark modes
+export const CardContent: React.FC<{ className?: string }> = ({ className, children }) => {
+  return <div className={`text-foreground ${className}`}>{children}</div>;
 };

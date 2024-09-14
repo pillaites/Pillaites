@@ -1,10 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { UploadThing } from 'uploadthing';  // Import UploadThing component
 
 interface Candidate {
   id: string;  // Adjust as per actual API response field
   name: string;
+  imageUrl?: string;  // Add imageUrl to Candidate interface
 }
 
 interface VotingPageProps {
@@ -17,6 +19,7 @@ export default function VotingPage({ params }: VotingPageProps) {
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
   const [newCandidateName, setNewCandidateName] = useState<string>("");
+  const [image, setImage] = useState<File | null>(null);  // Add state for image file
 
   useEffect(() => {
     async function fetchCandidates() {
@@ -67,13 +70,40 @@ export default function VotingPage({ params }: VotingPageProps) {
       return;
     }
 
+    // Handle image upload if image is selected
+    let imageUrl: string | undefined;
+    if (image) {
+      try {
+        const formData = new FormData();
+        formData.append('file', image);
+        const uploadRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: formData,
+        });
+
+        if (!uploadRes.ok) {
+          const errorData = await uploadRes.json();
+          throw new Error(errorData.error || "Error uploading image.");
+        }
+
+        const uploadData = await uploadRes.json();
+        imageUrl = uploadData.url;  // Assuming the response contains the URL
+      } catch (error: any) {
+        setMessage(error.message || "Error uploading image.");
+        return;
+      }
+    }
+
     try {
       const res = await fetch(`/api/elections/${electionId}/candidates`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: newCandidateName }),
+        body: JSON.stringify({
+          name: newCandidateName,
+          imageUrl,  // Include imageUrl in the request body
+        }),
       });
 
       if (!res.ok) {
@@ -84,6 +114,7 @@ export default function VotingPage({ params }: VotingPageProps) {
       const newCandidate = await res.json();
       setCandidates((prev) => [...prev, newCandidate]);
       setNewCandidateName("");  // Clear the input after adding
+      setImage(null);  // Clear the image file after adding
       setMessage("Candidate added successfully!");
     } catch (error: any) {
       setMessage(error.message || "Error adding candidate.");
@@ -104,6 +135,7 @@ export default function VotingPage({ params }: VotingPageProps) {
                 onChange={() => setSelectedCandidate(candidate.id)}
               />
               {candidate.name}
+              {candidate.imageUrl && <img src={candidate.imageUrl} alt={candidate.name} width={100} />}  {/* Display candidate image */}
             </label>
           </div>
         ))
@@ -118,6 +150,11 @@ export default function VotingPage({ params }: VotingPageProps) {
         value={newCandidateName}
         onChange={(e) => setNewCandidateName(e.target.value)}
         placeholder="Enter candidate name"
+      />
+      <input
+        type="file"
+        accept="image/*"
+        onChange={(e) => setImage(e.target.files?.[0] || null)}  // Handle image file selection
       />
       <button onClick={handleAddCandidate}>Add Candidate</button>
 

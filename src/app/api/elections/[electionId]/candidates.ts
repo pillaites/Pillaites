@@ -1,30 +1,44 @@
+import type { NextApiRequest, NextApiResponse } from 'next';
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
-export default async function handler(req, res) {
-  const { electionId } = req.query;
+type Candidate = {
+  name: string;
+  party: string;
+  electionId: string;
+};
 
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
-    const { name } = req.body;
+    // Extract the data from the request body
+    const { name, party, electionId }: Candidate = req.body;
 
-    if (!name) {
-      return res.status(400).json({ error: 'Candidate name is required' });
+    // Validate the data
+    if (!name || !party || !electionId) {
+      return res.status(400).json({ error: 'Name, party, and electionId are required.' });
     }
 
     try {
-      const newCandidate = await prisma.candidate.create({
+      // Create a new candidate in the database
+      const candidate = await prisma.candidate.create({
         data: {
           name,
-          electionId: parseInt(electionId, 10),  // Adjust based on how electionId is stored
+          party,
+          electionId,
         },
       });
 
-      res.status(201).json(newCandidate);
+      // Respond with the created candidate
+      return res.status(201).json(candidate);
     } catch (error) {
-      res.status(500).json({ error: 'Error adding candidate' });
+      // Handle any errors that occur during database operations
+      console.error('Error creating candidate:', error);
+      return res.status(500).json({ error: 'Internal server error' });
     }
   } else {
-    res.status(405).json({ error: 'Method not allowed' });
+    // Handle any other HTTP methods
+    res.setHeader('Allow', ['POST']);
+    return res.status(405).json({ error: `Method ${req.method} Not Allowed` });
   }
 }

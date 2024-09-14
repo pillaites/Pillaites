@@ -1,40 +1,21 @@
+// Adjust the import path if necessary
+import { useUploadThing } from "@/lib/uploadthing"; 
 
-import { useUploadThing } from "@/lib/uploadthing";
-import React, { useState } from 'react';
+const FileUpload = () => {
+  const { upload, isUploading } = useUploadThing();
 
-interface FileUploadProps {
-  onFileUpload: (file: File) => void;
-}
-
-const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
-  const [selectedFile, setSelectedFile] = useState<File | null>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    setSelectedFile(file);
-  };
-
-  const handleUploadClick = () => {
-    if (selectedFile) {
-      onFileUpload(selectedFile);
-      // Optionally, you could clear the selected file after upload
-      setSelectedFile(null);
+  const handleUpload = async (file: File) => {
+    try {
+      await upload(file);
+    } catch (error) {
+      console.error("Upload failed:", error);
     }
   };
 
   return (
     <div>
-      <input
-        type="file"
-        onChange={handleFileChange}
-      />
-      <button
-        onClick={handleUploadClick}
-        disabled={!selectedFile}
-      >
-        Upload
-      </button>
-      {selectedFile && <p>Selected file: {selectedFile.name}</p>}
+      <input type="file" onChange={(e) => e.target.files && handleUpload(e.target.files[0])} />
+      {isUploading && <p>Uploading...</p>}
     </div>
   );
 };

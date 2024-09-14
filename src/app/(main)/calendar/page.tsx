@@ -2,11 +2,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { Card, CardHeader, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
 
 interface Event {
   id: string;
   title: string;
-  date: string;  // Keep this as a string
+  date: string;
   description: string;
 }
 
@@ -26,10 +29,7 @@ const CalendarPage: React.FC = () => {
         throw new Error('Failed to fetch events');
       }
       const data = await response.json();
-      setEvents(data.map((event: any) => ({
-        ...event,
-        date: new Date(event.date).toISOString()  // Convert Date object to string
-      })));
+      setEvents(data);
     } catch (error) {
       setError('Error fetching events. Please try again later.');
       console.error('Error fetching events:', error);
@@ -60,71 +60,69 @@ const CalendarPage: React.FC = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 bg-[hsl(var(--card))] text-[hsl(var(--foreground))] dark:bg-[hsl(var(--card))] dark:text-[hsl(var(--foreground))]">
-      <h1 className="text-3xl font-bold mb-4 text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">
-        Calendar
-      </h1>
+    <div className="container mx-auto p-4 space-y-6">
+      <h1 className="text-3xl font-bold text-primary">Calendar</h1>
 
       {error && <p className="text-red-500">{error}</p>}
 
-      <div className="flex justify-between items-center mb-4">
-        <button 
-          onClick={prevMonth} 
-          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] dark:bg-[hsl(var(--primary))] dark:text-[hsl(var(--primary-foreground))] dark:hover:bg-[hsl(var(--primary-foreground))]"
-        >
-          Previous Month
-        </button>
-        <h2 className="text-xl font-semibold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">{format(currentDate, 'MMMM yyyy')}</h2>
-        <button 
-          onClick={nextMonth} 
-          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] dark:bg-[hsl(var(--primary))] dark:text-[hsl(var(--primary-foreground))] dark:hover:bg-[hsl(var(--primary-foreground))]"
-        >
-          Next Month
-        </button>
-      </div>
-
-      <div className="grid grid-cols-7 gap-2 mb-4">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="text-center font-bold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">
-            {day}
-          </div>
-        ))}
-        {daysInMonth.map(day => (
-          <div
-            key={day.toISOString()}
-            className={`p-4 border rounded-lg ${
-              isSameMonth(day, currentDate)
-                ? 'bg-[hsl(var(--card))] text-[hsl(var(--primary))]'
-                : 'bg-[hsl(var(--popover))] text-[hsl(var(--secondary))]'
-            } ${isSameDay(day, new Date()) ? 'border-[hsl(var(--accent))] font-bold' : 'border-[hsl(var(--border))]'}
-            dark:bg-[hsl(var(--card))] dark:text-[hsl(var(--primary))] dark:border-[hsl(var(--border))]`}
-          >
-            <div className="text-right">{format(day, 'd')}</div>
-            {getEventsForDate(day).map(event => (
-              <div key={event.id} className="text-xs bg-[hsl(var(--popover))] p-1 mt-1 rounded text-[hsl(var(--primary))] dark:bg-[hsl(var(--popover))] dark:text-[hsl(var(--primary))]">
-                {event.title}
+      <Card>
+        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Button variant="outline" size="icon" onClick={prevMonth}>
+            <ChevronLeft className="h-4 w-4" />
+          </Button>
+          <h2 className="text-xl font-semibold">{format(currentDate, 'MMMM yyyy')}</h2>
+          <Button variant="outline" size="icon" onClick={nextMonth}>
+            <ChevronRight className="h-4 w-4" />
+          </Button>
+        </CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-7 gap-2 mb-4">
+            {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
+              <div key={day} className="text-center font-bold text-muted-foreground">
+                {day}
+              </div>
+            ))}
+            {daysInMonth.map(day => (
+              <div
+                key={day.toISOString()}
+                className={`p-2 border rounded-lg text-center ${
+                  isSameMonth(day, currentDate)
+                    ? 'bg-background text-foreground'
+                    : 'bg-muted text-muted-foreground'
+                } ${isSameDay(day, new Date()) ? 'border-primary font-bold' : 'border-border'}`}
+              >
+                <div>{format(day, 'd')}</div>
+                {getEventsForDate(day).map(event => (
+                  <div key={event.id} className="text-xs bg-primary/10 p-1 mt-1 rounded truncate">
+                    {event.title}
+                  </div>
+                ))}
               </div>
             ))}
           </div>
-        ))}
-      </div>
+        </CardContent>
+      </Card>
 
-      <div className="bg-[hsl(var(--card))] p-4 rounded-lg dark:bg-[hsl(var(--card))]">
-        <h3 className="text-xl font-semibold mb-2 text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">Upcoming Events</h3>
-        <ul>
+      <Card>
+        <CardHeader>
+          <h3 className="text-xl font-semibold">Upcoming Events</h3>
+        </CardHeader>
+        <CardContent>
           {getUpcomingEvents().length > 0 ? (
-            getUpcomingEvents().map(event => (
-              <li key={event.id} className="mb-2 bg-[hsl(var(--popover))] p-2 rounded dark:bg-[hsl(var(--popover))]">
-                <div className="font-semibold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">{event.title}</div>
-                <div className="text-[hsl(var(--secondary))] dark:text-[hsl(var(--secondary))]">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
-                <div className="text-sm text-[hsl(var(--muted))] dark:text-[hsl(var(--muted))]">{event.description}</div>
-              </li>
-            ))
+            <ul className="space-y-2">
+              {getUpcomingEvents().map(event => (
+                <li key={event.id} className="bg-muted p-2 rounded">
+                  <div className="font-semibold">{event.title}</div>
+                  <div className="text-sm text-muted-foreground">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
+                  <div className="text-sm">{event.description}</div>
+                </li>
+              ))}
+            </ul>
           ) : (
-            <li className="text-center text-[hsl(var(--muted))] dark:text-[hsl(var(--muted))]">No upcoming events</li>
+            <p className="text-center text-muted-foreground">No upcoming events</p>
           )}
-        </ul>
-      </div>
+        </CardContent>
+      </Card>
     </div>
   );
 };

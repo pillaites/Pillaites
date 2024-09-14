@@ -86,7 +86,7 @@ const CalendarPage: React.FC = () => {
         {daysInMonth.map(day => (
           <div
             key={day.toISOString()}
-            className={`p-2 border rounded ${
+            className={`p-4 border rounded-lg ${
               isSameMonth(day, currentDate)
                 ? 'bg-[hsl(var(--card))] text-[hsl(var(--primary))]'
                 : 'bg-[hsl(var(--popover))] text-[hsl(var(--secondary))]'
@@ -106,13 +106,17 @@ const CalendarPage: React.FC = () => {
       <div className="bg-[hsl(var(--card))] p-4 rounded-lg dark:bg-[hsl(var(--card))]">
         <h3 className="text-xl font-semibold mb-2 text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">Upcoming Events</h3>
         <ul>
-          {getUpcomingEvents().map(event => (
-            <li key={event.id} className="mb-2 bg-[hsl(var(--popover))] p-2 rounded dark:bg-[hsl(var(--popover))]">
-              <div className="font-semibold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">{event.title}</div>
-              <div className="text-[hsl(var(--secondary))] dark:text-[hsl(var(--secondary))]">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
-              <div className="text-sm text-[hsl(var(--muted))] dark:text-[hsl(var(--muted))]">{event.description}</div>
-            </li>
-          ))}
+          {getUpcomingEvents().length > 0 ? (
+            getUpcomingEvents().map(event => (
+              <li key={event.id} className="mb-2 bg-[hsl(var(--popover))] p-2 rounded dark:bg-[hsl(var(--popover))]">
+                <div className="font-semibold text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">{event.title}</div>
+                <div className="text-[hsl(var(--secondary))] dark:text-[hsl(var(--secondary))]">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
+                <div className="text-sm text-[hsl(var(--muted))] dark:text-[hsl(var(--muted))]">{event.description}</div>
+              </li>
+            ))
+          ) : (
+            <li className="text-center text-[hsl(var(--muted))] dark:text-[hsl(var(--muted))]">No upcoming events</li>
+          )}
         </ul>
       </div>
     </div>

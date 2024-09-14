@@ -1,35 +1,27 @@
-import { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import path from 'path';
+// src/app/api/events.ts
 
-interface Event {
-  id: string;
-  title: string;
-  date: string;
-  description: string;
-}
+import { NextResponse } from 'next/server';
 
-export default function handler(req: NextApiRequest, res: NextApiResponse) {
+export async function GET() {
   try {
-    const filePath = path.join(process.cwd(), 'src/api/events.txt');
-    if (!fs.existsSync(filePath)) {
-      return res.status(404).json({ error: 'File not found' });
-    }
+    const events = [
+      {
+        id: '1',
+        title: 'Event One',
+        description: 'Description for Event One',
+        date: new Date('2024-09-20T10:00:00Z').toISOString(), // ISO string representation
+      },
+      {
+        id: '2',
+        title: 'Event Two',
+        description: 'Description for Event Two',
+        date: new Date('2024-09-25T14:00:00Z').toISOString(), // ISO string representation
+      },
+    ];
 
-    const fileContents = fs.readFileSync(filePath, 'utf8');
-    const events: Event[] = fileContents.split('\n').map((line, index) => {
-      const [title, date, description] = line.split('|');
-      return {
-        id: String(index + 1),
-        title: title.trim(),
-        date: date.trim(),
-        description: description.trim(),
-      };
-    });
-
-    res.status(200).json(events);
+    return NextResponse.json(events);
   } catch (error) {
-    console.error('Error reading events file:', error);
-    res.status(500).json({ error: 'Failed to read events' });
+    console.error('Error fetching events:', error);
+    return new NextResponse('Failed to fetch events.', { status: 500 });
   }
 }

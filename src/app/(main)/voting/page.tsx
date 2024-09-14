@@ -1,21 +1,53 @@
-import TrendsSidebar from "@/components/TrendsSidebar";
-import { Metadata } from "next";
-import Voting from "./Voting";
+import { useState, useEffect } from 'react';
 
-export const metadata: Metadata = {
-  title: "Voting",
-};
+export default function VotingPage({ electionId }) {
+  const [candidates, setCandidates] = useState([]);
+  const [selectedCandidate, setSelectedCandidate] = useState(null);
+  const [message, setMessage] = useState("");
 
-export default function Page() {
+  useEffect(() => {
+    async function fetchCandidates() {
+      const res = await fetch(`/api/elections/${electionId}`);
+      const data = await res.json();
+      setCandidates(data.results);
+    }
+    fetchCandidates();
+  }, [electionId]);
+
+  const handleVote = async () => {
+    if (!selectedCandidate) {
+      setMessage("Please select a candidate.");
+      return;
+    }
+
+    const res = await fetch(`/api/elections/${electionId}/vote`, {
+      method: 'POST',
+      body: JSON.stringify({ candidateId: selectedCandidate }),
+    });
+
+    if (res.ok) {
+      setMessage("Vote cast successfully!");
+    } else {
+      const data = await res.json();
+      setMessage(data.error || "Error casting vote.");
+    }
+  };
+
   return (
-    <main className="flex w-full min-w-0 gap-5">
-      <div className="w-full min-w-0 space-y-5">
-        <div className="rounded-2xl bg-card p-5 shadow-sm">
-          <h1 className="text-center text-2xl font-bold">Voting</h1>
+    <div>
+      <h1>Vote for your favorite candidate</h1>
+      {candidates.map(candidate => (
+        <div key={candidate.candidateId}>
+          <input
+            type="radio"
+            value={candidate.candidateId}
+            onChange={() => setSelectedCandidate(candidate.candidateId)}
+          />
+          {candidate.candidateName}
         </div>
-        <Voting />
-      </div>
-      <TrendsSidebar />
-    </main>
+      ))}
+      <button onClick={handleVote}>Cast Vote</button>
+      {message && <p>{message}</p>}
+    </div>
   );
 }

@@ -6,7 +6,7 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSam
 interface Event {
   id: string;
   title: string;
-  date: Date;  // Using string for simplicity, conversion to Date handled later
+  date: string;  // Keep this as a string
   description: string;
 }
 
@@ -25,10 +25,10 @@ const CalendarPage: React.FC = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
-      const data: Event[] = await response.json();
-      setEvents(data.map(event => ({
+      const data = await response.json();
+      setEvents(data.map((event: any) => ({
         ...event,
-        date: new Date(event.date)  // Convert string to Date object
+        date: new Date(event.date).toISOString()  // Convert Date object to string
       })));
     } catch (error) {
       setError('Error fetching events. Please try again later.');
@@ -48,7 +48,7 @@ const CalendarPage: React.FC = () => {
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
   const getEventsForDate = (date: Date) => {
-    return events.filter(event => isSameDay(event.date, date));
+    return events.filter(event => isSameDay(new Date(event.date), date));
   };
 
   const getUpcomingEvents = () => {

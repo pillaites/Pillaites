@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
-// Adjust the import based on the actual export from `uploadthing`
-import { UploadThing } from 'uploadthing'; 
+import { UploadThingClient } from 'uploadthing';
+
 
 interface FileUploadProps {
   onUpload: (url: string) => void;

@@ -6,13 +6,14 @@ import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSam
 interface Event {
   id: string;
   title: string;
-  date: Date;
+  date: string;  // Using string for simplicity, conversion to Date handled later
   description: string;
 }
 
 const CalendarPage: React.FC = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [events, setEvents] = useState<Event[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchEvents();
@@ -24,12 +25,13 @@ const CalendarPage: React.FC = () => {
       if (!response.ok) {
         throw new Error('Failed to fetch events');
       }
-      const data = await response.json();
-      setEvents(data.map((event: Event) => ({
+      const data: Event[] = await response.json();
+      setEvents(data.map(event => ({
         ...event,
-        date: new Date(event.date)
+        date: new Date(event.date)  // Convert string to Date object
       })));
     } catch (error) {
+      setError('Error fetching events. Please try again later.');
       console.error('Error fetching events:', error);
     }
   };
@@ -46,7 +48,7 @@ const CalendarPage: React.FC = () => {
   const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
 
   const getEventsForDate = (date: Date) => {
-    return events.filter(event => isSameDay(new Date(event.date), date));
+    return events.filter(event => isSameDay(event.date, date));
   };
 
   const getUpcomingEvents = () => {
@@ -62,6 +64,8 @@ const CalendarPage: React.FC = () => {
       <h1 className="text-3xl font-bold mb-4 text-[hsl(var(--primary))] dark:text-[hsl(var(--primary))]">
         Calendar
       </h1>
+
+      {error && <p className="text-red-500">{error}</p>}
 
       <div className="flex justify-between items-center mb-4">
         <button 

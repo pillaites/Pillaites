@@ -16,6 +16,7 @@ export default function VotingPage({ params }: VotingPageProps) {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
+  const [newCandidateName, setNewCandidateName] = useState<string>("");
 
   useEffect(() => {
     async function fetchCandidates() {
@@ -60,6 +61,35 @@ export default function VotingPage({ params }: VotingPageProps) {
     }
   };
 
+  const handleAddCandidate = async () => {
+    if (!newCandidateName.trim()) {
+      setMessage("Candidate name cannot be empty.");
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/elections/${electionId}/candidates`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name: newCandidateName }),
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.error || "Error adding candidate.");
+      }
+
+      const newCandidate = await res.json();
+      setCandidates((prev) => [...prev, newCandidate]);
+      setNewCandidateName("");  // Clear the input after adding
+      setMessage("Candidate added successfully!");
+    } catch (error: any) {
+      setMessage(error.message || "Error adding candidate.");
+    }
+  };
+
   return (
     <div>
       <h1>Vote for your favorite candidate</h1>
@@ -81,6 +111,16 @@ export default function VotingPage({ params }: VotingPageProps) {
         <p>No candidates available.</p>
       )}
       <button onClick={handleVote}>Cast Vote</button>
+
+      <h2>Add a New Candidate</h2>
+      <input
+        type="text"
+        value={newCandidateName}
+        onChange={(e) => setNewCandidateName(e.target.value)}
+        placeholder="Enter candidate name"
+      />
+      <button onClick={handleAddCandidate}>Add Candidate</button>
+
       {message && <p>{message}</p>}
     </div>
   );

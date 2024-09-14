@@ -2,7 +2,7 @@ import { validateRequest } from "@/auth";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home } from "lucide-react";
+import { Calendar, Vote } from "lucide-react"; // Updated icons for Calendar and Voting
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
@@ -31,12 +31,12 @@ export default async function MenuBar({ className }: MenuBarProps) {
       <Button
         variant="ghost"
         className="flex items-center justify-start gap-3"
-        title="Home"
+        title="Calendar"
         asChild
       >
-        <Link href="/">
-          <Home />
-          <span className="hidden lg:inline">Home</span>
+        <Link href="/calendar">
+          <Calendar />
+          <span className="hidden lg:inline">Calendar</span>
         </Link>
       </Button>
       <NotificationsButton
@@ -46,12 +46,12 @@ export default async function MenuBar({ className }: MenuBarProps) {
       <Button
         variant="ghost"
         className="flex items-center justify-start gap-3"
-        title="Bookmarks"
+        title="Voting"
         asChild
       >
-        <Link href="/bookmarks">
-          <Bookmark />
-          <span className="hidden lg:inline">Bookmarks</span>
+        <Link href="/voting">
+          <Vote />
+          <span className="hidden lg:inline">Voting</span>
         </Link>
       </Button>
     </div>

@@ -1,121 +1,95 @@
-'use client';
-
-import React, { useState, useEffect } from 'react';
-import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isSameDay, addMonths, subMonths } from 'date-fns';
-
-interface Event {
-  id: string;
-  title: string;
-  date: Date;
-  description: string;
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import "~stream-chat-react/dist/css/v2/index.css";
+@layer base {
+  :root {
+    --background: 60, 30%, 96%;
+    --foreground: 20, 10%, 20%;
+    --card: 60, 30%, 98%;
+    --card-foreground: 20, 10%, 20%;
+    --popover: 60, 30%, 98%;
+    --popover-foreground: 20, 10%, 20%;
+    --primary: 45, 100%, 50%;
+    --primary-foreground: 20, 10%, 20%;
+    --secondary: 40, 30%, 90%;
+    --secondary-foreground: 20, 10%, 20%;
+    --muted: 40, 20%, 85%;
+    --muted-foreground: 20, 10%, 40%;
+    --accent: 35, 100%, 60%;
+    --accent-foreground: 20, 10%, 20%;
+    --destructive: 0, 85%, 60%;
+    --destructive-foreground: 60, 30%, 96%;
+    --border: 40, 15%, 80%;
+    --input: 40, 15%, 80%;
+    --ring: 45, 100%, 50%;
+    --radius: 0.25rem;
+  }
+  .dark {
+    --background: 20, 10%, 10%;
+    --foreground: 60, 30%, 96%;
+    --card: 20, 10%, 15%;
+    --card-foreground: 60, 30%, 96%;
+    --popover: 20, 10%, 15%;
+    --popover-foreground: 60, 30%, 96%;
+    --primary: 45, 100%, 50%;
+    --primary-foreground: 20, 10%, 20%;
+    --secondary: 40, 15%, 25%;
+    --secondary-foreground: 60, 30%, 96%;
+    --muted: 40, 15%, 25%;
+    --muted-foreground: 60, 30%, 70%;
+    --accent: 35, 100%, 60%;
+    --accent-foreground: 20, 10%, 20%;
+    --destructive: 0, 85%, 60%;
+    --destructive-foreground: 60, 30%, 96%;
+    --border: 40, 15%, 25%;
+    --input: 40, 15%, 25%;
+    --ring: 45, 100%, 50%;
+  }
 }
-
-const CalendarPage: React.FC = () => {
-  const [currentDate, setCurrentDate] = useState(new Date());
-  const [events, setEvents] = useState<Event[]>([]);
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch('/api/events');
-      if (!response.ok) {
-        throw new Error('Failed to fetch events');
-      }
-      const data = await response.json();
-      setEvents(data.map((event: Event) => ({
-        ...event,
-        date: new Date(event.date)
-      })));
-    } catch (error) {
-      console.error('Error fetching events:', error);
-    }
-  };
-
-  const getDaysInMonth = (date: Date) => {
-    const start = startOfMonth(date);
-    const end = endOfMonth(date);
-    return eachDayOfInterval({ start, end });
-  };
-
-  const daysInMonth = getDaysInMonth(currentDate);
-
-  const nextMonth = () => setCurrentDate(addMonths(currentDate, 1));
-  const prevMonth = () => setCurrentDate(subMonths(currentDate, 1));
-
-  const getEventsForDate = (date: Date) => {
-    return events.filter(event => isSameDay(new Date(event.date), date));
-  };
-
-  const getUpcomingEvents = () => {
-    const today = new Date();
-    return events
-      .filter(event => new Date(event.date) >= today)
-      .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
-      .slice(0, 5);
-  };
-
-  return (
-    <div className="container mx-auto p-4 bg-[hsl(var(--card))] text-[hsl(var(--foreground))]">
-      <h1 className="text-3xl font-bold mb-4 text-[hsl(var(--primary))]">Calendar</h1>
-
-      <div className="flex justify-between items-center mb-4">
-        <button 
-          onClick={prevMonth} 
-          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] transition-colors"
-        >
-          Previous Month
-        </button>
-        <h2 className="text-xl font-semibold text-[hsl(var(--primary))]">{format(currentDate, 'MMMM yyyy')}</h2>
-        <button 
-          onClick={nextMonth} 
-          className="bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 py-2 rounded hover:bg-[hsl(var(--primary-foreground))] transition-colors"
-        >
-          Next Month
-        </button>
-      </div>
-
-      <div className="grid grid-cols-7 gap-2 mb-4">
-        {['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(day => (
-          <div key={day} className="text-center font-bold text-[hsl(var(--primary))]">
-            {day}
-          </div>
-        ))}
-        {daysInMonth.map(day => (
-          <div
-            key={day.toISOString()}
-            className={`p-2 border rounded ${
-              isSameMonth(day, currentDate)
-                ? 'bg-[hsl(var(--card))] text-[hsl(var(--primary))]'
-                : 'bg-[hsl(var(--popover))] text-[hsl(var(--secondary))]'
-            } ${isSameDay(day, new Date()) ? 'border-[hsl(var(--accent))] font-bold' : 'border-[hsl(var(--border))]'}`}
-          >
-            <div className="text-right">{format(day, 'd')}</div>
-            {getEventsForDate(day).map(event => (
-              <div key={event.id} className="text-xs bg-[hsl(var(--popover))] p-1 mt-1 rounded text-[hsl(var(--primary))]">
-                {event.title}
-              </div>
-            ))}
-          </div>
-        ))}
-      </div>
-
-      <div className="bg-[hsl(var(--card))] p-4 rounded-lg">
-        <h3 className="text-xl font-semibold mb-2 text-[hsl(var(--primary))]">Upcoming Events</h3>
-        <ul>
-          {getUpcomingEvents().map(event => (
-            <li key={event.id} className="mb-2 bg-[hsl(var(--popover))] p-2 rounded">
-              <div className="font-semibold text-[hsl(var(--primary))]">{event.title}</div>
-              <div className="text-[hsl(var(--secondary))]">{format(new Date(event.date), 'MMMM d, yyyy')}</div>
-              <div className="text-sm text-[hsl(var(--muted))]">{event.description}</div>
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Courier New', Courier, monospace;
+  }
+}
+.str-chat {
+  --str-chat__font-family: 'Courier New', Courier, monospace;
+  --str-chat__primary-color: theme(colors.primary.DEFAULT);
+  --str-chat__on-primary-color: theme(colors.primary.foreground);
+  --str-chat__active-primary-color: theme(colors.primary.foreground);
+  --str-chat__primary-color-low-emphasis: color-mix(
+    in hsl,
+    hsl(var(--primary)) 10%,
+    transparent
   );
-};
-
-export default CalendarPage;
+  --str-chat__background-color: theme(colors.card.DEFAULT);
+  --str-chat__secondary-background-color: theme(colors.card.DEFAULT);
+  --str-chat__message-textarea-background-color: theme(colors.background);
+  --str-chat__channel-preview-active-background-color: theme(
+    colors.accent.DEFAULT
+  );
+  --str-chat__channel-preview-hover-background-color: var(
+    --str-chat__channel-preview-active-background-color
+  );
+  --str-chat__secondary-surface-color: theme(colors.muted.DEFAULT);
+  --str-chat__own-message-bubble-color: theme(colors.primary.foreground);
+  --str-chat__primary-surface-color: theme(colors.primary.DEFAULT);
+  --str-chat__primary-surface-color-low-emphasis: var(
+    --str-chat__primary-color-low-emphasis
+  );
+  --str-chat__disabled-color: theme(colors.muted.DEFAULT);
+  --str-chat__cta-button-border-radius: var(--radius);
+}
+.str-chat-channel-list {
+  border-right: none;
+}
+.str-chat__channel-list-react .str-chat__channel-list-messenger-react {
+  padding-bottom: 0;
+}
+.str-chat__channel-search-bar-button--exit-search {
+  display: none;
+}

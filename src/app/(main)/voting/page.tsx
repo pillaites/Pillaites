@@ -3,20 +3,20 @@
 import { useState, useEffect } from 'react';
 
 interface Candidate {
-  id: string;      // Assuming `id` is the candidate's unique identifier
-  name: string;    // Assuming `name` is the candidate's display name
+  id: string;  // Adjust as per actual API response field
+  name: string;
 }
 
 interface VotingPageProps {
-  electionId: string;
+  params: { electionId: string };  // Adjusted prop definition to match dynamic routing
 }
 
-export default function VotingPage({ electionId }: VotingPageProps) {
+export default function VotingPage({ params }: VotingPageProps) {
+  const { electionId } = params;  // Destructure electionId from params
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [selectedCandidate, setSelectedCandidate] = useState<string | null>(null);
   const [message, setMessage] = useState<string>("");
 
-  // Fetch the candidates for the election
   useEffect(() => {
     async function fetchCandidates() {
       try {
@@ -34,7 +34,6 @@ export default function VotingPage({ electionId }: VotingPageProps) {
     fetchCandidates();
   }, [electionId]);
 
-  // Handle voting for a selected candidate
   const handleVote = async () => {
     if (!selectedCandidate) {
       setMessage("Please select a candidate.");

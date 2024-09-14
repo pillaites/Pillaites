@@ -140,6 +140,7 @@ model Election {
 model Candidate {
   id          String      @id @default(uuid())
   name        String
+  party       String      // Add this line
   electionId  String
   election    Election    @relation(fields: [electionId], references: [id])
   votes       Vote[]

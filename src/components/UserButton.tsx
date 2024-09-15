@@ -4,7 +4,7 @@ import { logout } from "@/app/(auth)/actions";
 import { useSession } from "@/app/(main)/SessionProvider";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon } from "lucide-react";
+import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon, Calendar, Vote } from "lucide-react"; // Add icons for calendar and voting
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import {
@@ -48,6 +48,23 @@ export default function UserButton({ className }: UserButtonProps) {
             Profile
           </DropdownMenuItem>
         </Link>
+        
+        {/* Add Calendar Option */}
+        <Link href="/calendar">
+          <DropdownMenuItem>
+            <Calendar className="mr-2 size-4" />
+            Calendar
+          </DropdownMenuItem>
+        </Link>
+
+        {/* Add Voting Option */}
+        <Link href="/voting">
+          <DropdownMenuItem>
+            <Vote className="mr-2 size-4" />
+            Voting
+          </DropdownMenuItem>
+        </Link>
+
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Monitor className="mr-2 size-4" />

@@ -127,6 +127,37 @@ model Bookmark {
   @@map("bookmarks")
 }
 
+model Election {
+  id         String      @id @default(uuid())
+  title      String
+  description String?
+  candidates Candidate[]
+  votes      Vote[]
+  startDate  DateTime
+  endDate    DateTime
+}
+
+model Candidate {
+  id          String      @id @default(uuid())
+  name        String
+  party       String      // Party field added
+  profilePhoto String?   // Profile photo URL
+  electionId  String
+  election    Election    @relation(fields: [electionId], references: [id])
+  votes       Vote[]
+}
+
+model Vote {
+  id          String      @id @default(uuid())
+  userId      String
+  candidateId String
+  candidate   Candidate   @relation(fields: [candidateId], references: [id])
+  electionId  String
+  election    Election    @relation(fields: [electionId], references: [id])
+  
+  @@unique([userId, electionId]) // Ensure each user can only vote once per election
+}
+
 model Notification {
   id          String           @id @default(cuid())
   recipientId String

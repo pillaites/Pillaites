@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 @import "~stream-chat-react/dist/css/v2/index.css";
-
 @layer base {
   :root {
     --background: 60, 30%, 96%;
@@ -26,7 +25,6 @@
     --ring: 45, 100%, 50%;
     --radius: 0.25rem;
   }
-
   .dark {
     --background: 20, 10%, 10%;
     --foreground: 60, 30%, 96%;
@@ -49,7 +47,6 @@
     --ring: 45, 100%, 50%;
   }
 }
-
 @layer base {
   * {
     @apply border-border;
@@ -59,7 +56,6 @@
     font-family: 'Courier New', Courier, monospace;
   }
 }
-
 .str-chat {
   --str-chat__font-family: 'Courier New', Courier, monospace;
   --str-chat__primary-color: theme(colors.primary.DEFAULT);
@@ -88,15 +84,12 @@
   --str-chat__disabled-color: theme(colors.muted.DEFAULT);
   --str-chat__cta-button-border-radius: var(--radius);
 }
-
 .str-chat-channel-list {
   border-right: none;
 }
-
 .str-chat__channel-list-react .str-chat__channel-list-messenger-react {
   padding-bottom: 0;
 }
-
 .str-chat__channel-search-bar-button--exit-search {
   display: none;
 }

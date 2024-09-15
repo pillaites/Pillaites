@@ -2,7 +2,7 @@ import { validateRequest } from "@/auth";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home, Calendar, Vote } from "lucide-react"; // Updated icons for all buttons
+import { Bookmark, Home } from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
@@ -28,7 +28,6 @@ export default async function MenuBar({ className }: MenuBarProps) {
 
   return (
     <div className={className}>
-      {/* Home Button */}
       <Button
         variant="ghost"
         className="flex items-center justify-start gap-3"
@@ -40,8 +39,10 @@ export default async function MenuBar({ className }: MenuBarProps) {
           <span className="hidden lg:inline">Home</span>
         </Link>
       </Button>
-
-      {/* Bookmarks Button */}
+      <NotificationsButton
+        initialState={{ unreadCount: unreadNotificationsCount }}
+      />
+      <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
       <Button
         variant="ghost"
         className="flex items-center justify-start gap-3"
@@ -53,40 +54,6 @@ export default async function MenuBar({ className }: MenuBarProps) {
           <span className="hidden lg:inline">Bookmarks</span>
         </Link>
       </Button>
-
-      {/* Calendar Button */}
-      <Button
-        variant="ghost"
-        className="flex items-center justify-start gap-3"
-        title="Calendar"
-        asChild
-      >
-        <Link href="/calendar">
-          <Calendar />
-          <span className="hidden lg:inline">Calendar</span>
-        </Link>
-      </Button>
-
-      {/* Voting Button */}
-      <Button
-        variant="ghost"
-        className="flex items-center justify-start gap-3"
-        title="Voting"
-        asChild
-      >
-        <Link href="/voting">
-          <Vote />
-          <span className="hidden lg:inline">Voting</span>
-        </Link>
-      </Button>
-
-      {/* Notifications Button */}
-      <NotificationsButton
-        initialState={{ unreadCount: unreadNotificationsCount }}
-      />
-
-      {/* Messages Button */}
-      <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
     </div>
   );
 }

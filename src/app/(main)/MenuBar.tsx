@@ -12,10 +12,13 @@ interface MenuBarProps {
 }
 
 export default async function MenuBar({ className }: MenuBarProps) {
+  // Validate the user session
   const { user } = await validateRequest();
 
+  // If there's no user, return null (do not render the menu)
   if (!user) return null;
 
+  // Fetch unread notifications and messages count in parallel
   const [unreadNotificationsCount, unreadMessagesCount] = await Promise.all([
     prisma.notification.count({
       where: {
@@ -28,6 +31,7 @@ export default async function MenuBar({ className }: MenuBarProps) {
 
   return (
     <div className={className}>
+      {/* Home Button */}
       <Button
         variant="ghost"
         className="flex items-center justify-start gap-3"
@@ -39,10 +43,16 @@ export default async function MenuBar({ className }: MenuBarProps) {
           <span className="hidden lg:inline">Home</span>
         </Link>
       </Button>
+
+      {/* Notifications Button */}
       <NotificationsButton
         initialState={{ unreadCount: unreadNotificationsCount }}
       />
+
+      {/* Messages Button */}
       <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
+
+      {/* Bookmarks Button */}
       <Button
         variant="ghost"
         className="flex items-center justify-start gap-3"

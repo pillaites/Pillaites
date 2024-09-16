@@ -1,23 +1,3 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { useQueryClient } from "@tanstack/react-query";
-import { MailPlus, X } from "lucide-react";
-import { useCallback, useEffect, useState } from "react";
-import {
-  ChannelList,
-  ChannelPreviewMessenger,
-  ChannelPreviewUIComponentProps,
-  useChatContext,
-} from "stream-chat-react";
-import { useSession } from "../SessionProvider";
-import NewChatDialog from "./NewChatDialog";
-
-interface ChatSidebarProps {
-  open: boolean;
-  onClose: () => void;
-  className?: string; // Added className prop here
-}
-
 const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose, className }) => {
   const { user } = useSession();
   const queryClient = useQueryClient();
@@ -47,7 +27,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose, className }) =
       className={cn(
         "flex-col border-e md:flex md:w-72",
         open ? "flex" : "hidden",
-        className // Apply the className prop here
+        className // Apply the className here
       )}
     >
       <MenuHeader onClose={onClose} />
@@ -67,43 +47,3 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose, className }) =
     </div>
   );
 };
-
-interface MenuHeaderProps {
-  onClose: () => void;
-}
-
-const MenuHeader: React.FC<MenuHeaderProps> = ({ onClose }) => {
-  const [showNewChatDialog, setShowNewChatDialog] = useState(false);
-
-  return (
-    <>
-      <div className="flex items-center gap-3 p-2">
-        <div className="h-full md:hidden">
-          <Button size="icon" variant="ghost" onClick={onClose}>
-            <X className="w-5 h-5" />
-          </Button>
-        </div>
-        <h1 className="me-auto text-xl font-bold md:ms-2">Messages</h1>
-        <Button
-          size="icon"
-          variant="ghost"
-          title="Start new chat"
-          onClick={() => setShowNewChatDialog(true)}
-        >
-          <MailPlus className="w-5 h-5" />
-        </Button>
-      </div>
-      {showNewChatDialog && (
-        <NewChatDialog
-          onOpenChange={setShowNewChatDialog}
-          onChatCreated={() => {
-            setShowNewChatDialog(false);
-            onClose();
-          }}
-        />
-      )}
-    </>
-  );
-};
-
-export default ChatSidebar;

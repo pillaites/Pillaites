@@ -15,9 +15,10 @@ import NewChatDialog from "./NewChatDialog";
 interface ChatSidebarProps {
   open: boolean;
   onClose: () => void;
+  className?: string; // Added className prop here
 }
 
-const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose }) => {
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose, className }) => {
   const { user } = useSession();
   const queryClient = useQueryClient();
   const { channel } = useChatContext();
@@ -45,7 +46,8 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose }) => {
     <div
       className={cn(
         "flex-col border-e md:flex md:w-72",
-        open ? "flex" : "hidden"
+        open ? "flex" : "hidden",
+        className // Apply the className prop here
       )}
     >
       <MenuHeader onClose={onClose} />

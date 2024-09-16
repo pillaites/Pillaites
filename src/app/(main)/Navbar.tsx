@@ -1,4 +1,4 @@
- import SearchField from "@/components/SearchField";
+import SearchField from "@/components/SearchField";
 import UserButton from "@/components/UserButton";
 import Link from "next/link";
 import Image from "next/image";

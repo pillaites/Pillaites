@@ -70,4 +70,3 @@ export default async function MenuBar({ className }: MenuBarProps) {
     </div>
   );
 }
-

@@ -17,7 +17,6 @@ export default function Chat() {
     return <Loader2 className="mx-auto my-3 animate-spin" />;
   }
 
-  // Determine the theme based on the resolvedTheme
   const chatTheme = resolvedTheme === "dark" ? "str-chat__theme-dark" : "str-chat__theme-light";
 
   return (

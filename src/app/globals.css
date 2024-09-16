@@ -2,94 +2,199 @@
 @tailwind components;
 @tailwind utilities;
 @import "~stream-chat-react/dist/css/v2/index.css";
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
 @layer base {
   :root {
-    --background: 60, 30%, 96%;
-    --foreground: 20, 10%, 20%;
-    --card: 60, 30%, 98%;
-    --card-foreground: 20, 10%, 20%;
-    --popover: 60, 30%, 98%;
-    --popover-foreground: 20, 10%, 20%;
-    --primary: 45, 100%, 50%;
-    --primary-foreground: 20, 10%, 20%;
-    --secondary: 40, 30%, 90%;
-    --secondary-foreground: 20, 10%, 20%;
-    --muted: 40, 20%, 85%;
-    --muted-foreground: 20, 10%, 40%;
-    --accent: 35, 100%, 60%;
-    --accent-foreground: 20, 10%, 20%;
-    --destructive: 0, 85%, 60%;
-    --destructive-foreground: 60, 30%, 96%;
-    --border: 40, 15%, 80%;
-    --input: 40, 15%, 80%;
-    --ring: 45, 100%, 50%;
+    --background: 0 0% 100%;
+    --foreground: 220 20% 20%;
+    --card: 0 0% 98%;
+    --card-foreground: 220 20% 20%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 220 20% 20%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 220 20% 20%;
+    --secondary: 220 15% 90%;
+    --secondary-foreground: 220 20% 20%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 20% 40%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 220 20% 20%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
+    --ring: 45 100% 50%;
     --radius: 0.25rem;
   }
   .dark {
-    --background: 20, 10%, 10%;
-    --foreground: 60, 30%, 96%;
-    --card: 20, 10%, 15%;
-    --card-foreground: 60, 30%, 96%;
-    --popover: 20, 10%, 15%;
-    --popover-foreground: 60, 30%, 96%;
-    --primary: 45, 100%, 50%;
-    --primary-foreground: 20, 10%, 20%;
-    --secondary: 40, 15%, 25%;
-    --secondary-foreground: 60, 30%, 96%;
-    --muted: 40, 15%, 25%;
-    --muted-foreground: 60, 30%, 70%;
-    --accent: 35, 100%, 60%;
-    --accent-foreground: 20, 10%, 20%;
-    --destructive: 0, 85%, 60%;
-    --destructive-foreground: 60, 30%, 96%;
-    --border: 40, 15%, 25%;
-    --input: 40, 15%, 25%;
-    --ring: 45, 100%, 50%;
+    --background: 220 20% 5%;
+    --foreground: 0 0% 95%;
+    --card: 220 20% 8%;
+    --card-foreground: 0 0% 95%;
+    --popover: 220 20% 8%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 220 20% 5%;
+    --secondary: 220 15% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 0 0% 70%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 220 20% 5%;
+    --destructive: 0 85% 60%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 220 15% 15%;
+    --input: 220 15% 15%;
+    --ring: 45 100% 50%;
   }
 }
+
 @layer base {
   * {
     @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
-    font-family: 'Courier New', Courier, monospace;
+    font-family: 'Inter', sans-serif;
   }
 }
+
 .str-chat {
-  --str-chat__font-family: 'Courier New', Courier, monospace;
-  --str-chat__primary-color: theme(colors.primary.DEFAULT);
-  --str-chat__on-primary-color: theme(colors.primary.foreground);
-  --str-chat__active-primary-color: theme(colors.primary.foreground);
-  --str-chat__primary-color-low-emphasis: color-mix(
-    in hsl,
-    hsl(var(--primary)) 10%,
-    transparent
-  );
-  --str-chat__background-color: theme(colors.card.DEFAULT);
-  --str-chat__secondary-background-color: theme(colors.card.DEFAULT);
-  --str-chat__message-textarea-background-color: theme(colors.background);
-  --str-chat__channel-preview-active-background-color: theme(
-    colors.accent.DEFAULT
-  );
-  --str-chat__channel-preview-hover-background-color: var(
-    --str-chat__channel-preview-active-background-color
-  );
-  --str-chat__secondary-surface-color: theme(colors.muted.DEFAULT);
-  --str-chat__own-message-bubble-color: theme(colors.primary.foreground);
-  --str-chat__primary-surface-color: theme(colors.primary.DEFAULT);
-  --str-chat__primary-surface-color-low-emphasis: var(
-    --str-chat__primary-color-low-emphasis
-  );
-  --str-chat__disabled-color: theme(colors.muted.DEFAULT);
+  --str-chat__font-family: 'Inter', sans-serif;
+  --str-chat__primary-color: hsl(var(--primary));
+  --str-chat__on-primary-color: hsl(var(--primary-foreground));
+  --str-chat__active-primary-color: hsl(var(--primary-foreground));
+  --str-chat__primary-color-low-emphasis: hsl(var(--primary) / 0.1);
+  --str-chat__background-color: hsl(var(--background));
+  --str-chat__secondary-background-color: hsl(var(--card));
+  --str-chat__message-textarea-background-color: hsl(var(--card));
+  --str-chat__channel-preview-active-background-color: hsl(var(--accent) / 0.1);
+  --str-chat__channel-preview-hover-background-color: hsl(var(--accent) / 0.05);
+  --str-chat__secondary-surface-color: hsl(var(--secondary));
+  --str-chat__own-message-bubble-color: hsl(var(--primary) / 0.1);
+  --str-chat__primary-surface-color: hsl(var(--primary));
+  --str-chat__primary-surface-color-low-emphasis: hsl(var(--primary) / 0.1);
+  --str-chat__disabled-color: hsl(var(--muted));
   --str-chat__cta-button-border-radius: var(--radius);
 }
+
 .str-chat-channel-list {
-  border-right: none;
+  border-right: 1px solid hsl(var(--border));
 }
+
 .str-chat__channel-list-react .str-chat__channel-list-messenger-react {
   padding-bottom: 0;
 }
+
 .str-chat__channel-search-bar-button--exit-search {
   display: none;
+}
+
+/* Minimal styles with yellow accent */
+.str-chat__message-text-inner {
+  font-family: 'Inter', sans-serif;
+  border: 1px solid hsl(var(--border));
+  padding: 12px;
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+}
+
+.str-chat__message-input {
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+}
+
+.str-chat__send-button {
+  background-color: hsl(var(--primary));
+  color: hsl(var(--primary-foreground));
+  border: none;
+  font-weight: 500;
+  border-radius: var(--radius);
+  transition: all 0.2s ease;
+}
+
+.str-chat__send-button:hover {
+  background-color: hsl(var(--primary) / 0.9);
+}
+
+.str-chat__message-reactions-list {
+  background-color: hsl(var(--background));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+
+.str-chat__message-attachment {
+  border: 1px solid hsl(var(--border));
+  background-color: hsl(var(--card));
+  border-radius: var(--radius);
+}
+
+.str-chat__header-livestream {
+  background-color: hsl(var(--card));
+  border-bottom: 1px solid hsl(var(--border));
+}
+
+.str-chat__list {
+  background-color: hsl(var(--background));
+}
+
+.str-chat__message-simple__actions {
+  background-color: hsl(var(--card));
+  border: 1px solid hsl(var(--border));
+  border-radius: var(--radius);
+}
+
+.str-chat__message-sender-name {
+  font-weight: 600;
+  color: hsl(var(--primary));
+}
+
+.str-chat__message-simple-status {
+  font-style: italic;
+  color: hsl(var(--muted-foreground));
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--card));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--primary) / 0.3);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* Minimal yellow accents */
+.str-chat__header-livestream {
+  border-bottom: 2px solid hsl(var(--primary));
+}
+
+.str-chat__avatar {
+  border: 2px solid hsl(var(--primary) / 0.2);
+}
+
+.str-chat__message-simple:hover {
+  background-color: hsl(var(--primary) / 0.05);
+}
+
+.str-chat__message-attachment-file--item-download {
+  color: hsl(var(--primary));
+}
+
+.str-chat__message-attachment-file--item-download:hover {
+  color: hsl(var(--primary) / 0.8);
+}
+
+.str-chat__input-flat {
+  border-top: 2px solid hsl(var(--primary) / 0.1);
 }

@@ -12,12 +12,11 @@ interface MenuBarProps {
 }
 
 export default function MenuBar({ className }: MenuBarProps) {
-  // Replace with static user data for demonstration
   const user = { id: 'mock-user-id' };
 
-  // Replace these with static values if needed
-  const unreadNotificationsCount = 5; // Example count
-  const unreadMessagesCount = 10; // Example count
+  // Static values for demo purposes
+  const unreadNotificationsCount = 5;
+  const unreadMessagesCount = 10;
 
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -90,3 +89,4 @@ export default function MenuBar({ className }: MenuBarProps) {
     </div>
   );
 }
+

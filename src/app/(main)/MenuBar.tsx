@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from 'react';
 import { validateRequest } from "@/auth";
 import { Button } from "@/components/ui/button";

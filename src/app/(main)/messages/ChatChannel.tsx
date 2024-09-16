@@ -15,7 +15,7 @@ interface ChatChannelProps {
   openSidebar: () => void;
 }
 
-export default function ChatChannel({ open, openSidebar }: ChatChannelProps) {
+const ChatChannel: React.FC<ChatChannelProps> = ({ open, openSidebar }) => {
   return (
     <div className={cn("w-full md:block", !open && "hidden")}>
       <Channel>
@@ -27,16 +27,16 @@ export default function ChatChannel({ open, openSidebar }: ChatChannelProps) {
       </Channel>
     </div>
   );
-}
+};
 
 interface CustomChannelHeaderProps extends ChannelHeaderProps {
   openSidebar: () => void;
 }
 
-function CustomChannelHeader({
+const CustomChannelHeader: React.FC<CustomChannelHeaderProps> = ({
   openSidebar,
   ...props
-}: CustomChannelHeaderProps) {
+}) => {
   return (
     <div className="flex items-center gap-3">
       <div className="h-full p-2 md:hidden">
@@ -47,4 +47,6 @@ function CustomChannelHeader({
       <ChannelHeader {...props} />
     </div>
   );
-}
+};
+
+export default ChatChannel;

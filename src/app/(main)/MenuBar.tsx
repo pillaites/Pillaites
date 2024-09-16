@@ -2,8 +2,6 @@
 
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import prisma from "@/lib/prisma";
-import streamServerClient from "@/lib/stream";
 import { Bookmark, Home, Newspaper, MessageCircle, Bell } from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
@@ -13,7 +11,7 @@ interface MenuBarProps {
   className?: string;
 }
 
-export default async function MenuBar({ className }: MenuBarProps) {
+export default function MenuBar({ className }: MenuBarProps) {
   // Replace with static user data for demonstration
   const user = { id: 'mock-user-id' };
 

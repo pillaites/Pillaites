@@ -1,9 +1,11 @@
+"use client";
+
 import { useState } from "react";
 import { validateRequest } from "@/auth";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home, Newspaper } from "lucide-react"; // Import Newspaper icon
+import { Bookmark, Home, Newspaper } from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
@@ -27,7 +29,6 @@ export default async function MenuBar({ className }: MenuBarProps) {
     (await streamServerClient.getUnreadCount(user.id)).total_unread_count,
   ]);
 
-  // State to track the selected icon
   const [selectedIcon, setSelectedIcon] = useState<string>("");
 
   return (

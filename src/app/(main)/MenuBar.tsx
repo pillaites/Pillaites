@@ -1,8 +1,8 @@
-import { useState } from "react";
+import { validateRequest } from "@/auth";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home, Newspaper, MessageCircle, Bell } from "lucide-react";
+import { Bookmark, Home, Newspaper } from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
@@ -12,79 +12,57 @@ interface MenuBarProps {
 }
 
 export default async function MenuBar({ className }: MenuBarProps) {
-  // Replace with static user data for demonstration
-  const user = { id: 'mock-user-id' };
+  const { user } = await validateRequest();
 
-  // Replace these with static values if needed
-  const unreadNotificationsCount = 5; // Example count
-  const unreadMessagesCount = 10; // Example count
+  if (!user) return null;
 
-  const [selected, setSelected] = useState<string | null>(null);
-
-  const handleSelect = (section: string) => {
-    setSelected(section);
-  };
+  const [unreadNotificationsCount, unreadMessagesCount] = await Promise.all([
+    prisma.notification.count({
+      where: {
+        recipientId: user.id,
+        read: false,
+      },
+    }),
+    (await streamServerClient.getUnreadCount(user.id)).total_unread_count,
+  ]);
 
   return (
     <div className={className}>
       <Button
         variant="ghost"
-        className={`flex items-center justify-start gap-3 ${selected === 'home' ? 'text-yellow-500' : ''}`}
+        className="flex items-center justify-start gap-3 group"
         title="Home"
         asChild
-        onClick={() => handleSelect('home')}
       >
         <Link href="/">
-          <Home className={`h-5 w-5 ${selected === 'home' ? 'text-yellow-500' : ''}`} />
-          <span className={`hidden lg:inline ${selected === 'home' ? 'text-yellow-500' : ''}`}>Home</span>
+          <Home className="group-hover:text-yellow-500 group-active:text-yellow-600" />
+          <span className="hidden lg:inline group-hover:text-yellow-500 group-active:text-yellow-600">Home</span>
         </Link>
       </Button>
-
       <Button
         variant="ghost"
-        className={`flex items-center justify-start gap-3 ${selected === 'news' ? 'text-yellow-500' : ''}`}
+        className="flex items-center justify-start gap-3 group"
         title="News"
         asChild
-        onClick={() => handleSelect('news')}
       >
         <Link href="/news">
-          <Newspaper className={`h-5 w-5 ${selected === 'news' ? 'text-yellow-500' : ''}`} />
-          <span className={`hidden lg:inline ${selected === 'news' ? 'text-yellow-500' : ''}`}>News</span>
+          <Newspaper className="group-hover:text-yellow-500 group-active:text-yellow-600" />
+          <span className="hidden lg:inline group-hover:text-yellow-500 group-active:text-yellow-600">News</span>
         </Link>
       </Button>
-
-      <Button
-        variant="ghost"
-        className={`flex items-center justify-start gap-3 ${selected === 'messages' ? 'text-yellow-500' : ''}`}
-        title="Messages"
-        asChild
-        onClick={() => handleSelect('messages')}
-      >
-        <Link href="/messages">
-          <MessageCircle className={`h-5 w-5 ${selected === 'messages' ? 'text-yellow-500' : ''}`} />
-          <span className={`hidden lg:inline ${selected === 'messages' ? 'text-yellow-500' : ''}`}>Messages</span>
-        </Link>
-      </Button>
-
+      <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
       <NotificationsButton
         initialState={{ unreadCount: unreadNotificationsCount }}
-        onClick={() => handleSelect('notifications')}
-        className={`flex items-center justify-start gap-3 ${selected === 'notifications' ? 'text-yellow-500' : ''}`}
-      >
-        <Bell className={`h-5 w-5 ${selected === 'notifications' ? 'text-yellow-500' : ''}`} />
-        <span className={`hidden lg:inline ${selected === 'notifications' ? 'text-yellow-500' : ''}`}>Notifications</span>
-      </NotificationsButton>
-
+      />
       <Button
         variant="ghost"
-        className={`flex items-center justify-start gap-3 ${selected === 'bookmarks' ? 'text-yellow-500' : ''}`}
+        className="flex items-center justify-start gap-3 group"
         title="Bookmarks"
         asChild
-        onClick={() => handleSelect('bookmarks')}
       >
         <Link href="/bookmarks">
-          <Bookmark className={`h-5 w-5 ${selected === 'bookmarks' ? 'text-yellow-500' : ''}`} />
-          <span className={`hidden lg:inline ${selected === 'bookmarks' ? 'text-yellow-500' : ''}`}>Bookmarks</span>
+          <Bookmark className="group-hover:text-yellow-500 group-active:text-yellow-600" />
+          <span className="hidden lg:inline group-hover:text-yellow-500 group-active:text-yellow-600">Bookmarks</span>
         </Link>
       </Button>
     </div>

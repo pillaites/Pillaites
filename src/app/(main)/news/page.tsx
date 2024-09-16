@@ -9,7 +9,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 export default function NewsFeed() {
-  // Fetch posts for the hardcoded "news" handle
+  // Fetch posts for the "news" handle
   const {
     data,
     fetchNextPage,
@@ -22,7 +22,7 @@ export default function NewsFeed() {
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
-          "/api/posts/news", // Use your updated route to get posts for "news"
+          "/api/posts/news", // Updated route for "news" posts
           pageParam ? { searchParams: { cursor: pageParam } } : {}
         )
         .json<PostsPage>(),
@@ -33,34 +33,42 @@ export default function NewsFeed() {
   const posts = data?.pages.flatMap((page) => page.posts) || [];
 
   if (status === "pending") {
-    return <PostsLoadingSkeleton />;
+    return <PostsLoadingSkeleton className="w-full h-full" />;
   }
 
   if (status === "success" && !posts.length && !hasNextPage) {
     return (
-      <p className="text-center text-muted-foreground">
-        No posts found for this user.
-      </p>
+      <div className="flex items-center justify-center w-full h-full">
+        <p className="text-center text-muted-foreground">
+          No posts found for this user.
+        </p>
+      </div>
     );
   }
 
   if (status === "error") {
     return (
-      <p className="text-center text-destructive">
-        An error occurred while loading posts.
-      </p>
+      <div className="flex items-center justify-center w-full h-full">
+        <p className="text-center text-destructive">
+          An error occurred while loading posts.
+        </p>
+      </div>
     );
   }
 
   return (
     <InfiniteScrollContainer
-      className="space-y-5"
+      className="space-y-5 w-full h-full"
       onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
     >
       {posts.map((post) => (
         <Post key={post.id} post={post} />
       ))}
-      {isFetchingNextPage && <Loader2 className="mx-auto my-3 animate-spin" />}
+      {isFetchingNextPage && (
+        <div className="flex items-center justify-center w-full">
+          <Loader2 className="mx-auto my-3 animate-spin" />
+        </div>
+      )}
     </InfiniteScrollContainer>
   );
 }

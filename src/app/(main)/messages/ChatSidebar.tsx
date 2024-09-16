@@ -4,18 +4,18 @@ import React from 'react';
 interface ChatSidebarProps {
   open: boolean; // Determines if the sidebar is open or closed
   onClose: () => void; // Function to handle closing the sidebar
-  className?: string; // Optional className for additional styling
+  className?: string; // Optional className for styling
 }
 
 // Functional component definition
 const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose, className }) => {
-  // Generate the sidebar classes based on the open state
+  // CSS classes for sidebar based on the open state
   const sidebarClasses = `fixed top-0 right-0 h-full bg-white shadow-lg transition-transform transform ${open ? 'translate-x-0' : 'translate-x-full'} ${className || ''}`;
 
   return (
     <div className={sidebarClasses}>
       <button
-        className="absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-700 transition-colors"
+        className="absolute top-4 right-4 p-2 text-gray-500"
         onClick={onClose}
         aria-label="Close sidebar"
       >

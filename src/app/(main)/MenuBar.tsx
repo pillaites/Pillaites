@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { validateRequest } from "@/auth";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
@@ -26,15 +27,18 @@ export default async function MenuBar({ className }: MenuBarProps) {
     (await streamServerClient.getUnreadCount(user.id)).total_unread_count,
   ]);
 
+  const [active, setActive] = useState<string>("");
+
   return (
     <div className={className}>
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3"
+        className={`flex items-center justify-start gap-3 ${active === 'home' ? 'text-primary' : 'text-secondary'}`}
         title="Home"
         asChild
+        onClick={() => setActive('home')}
       >
-        <Link href="/">
+        <Link href="/" passHref>
           <Home />
           <span className="hidden lg:inline">Home</span>
         </Link>
@@ -47,11 +51,12 @@ export default async function MenuBar({ className }: MenuBarProps) {
 
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3"
+        className={`flex items-center justify-start gap-3 ${active === 'bookmarks' ? 'text-primary' : 'text-secondary'}`}
         title="Bookmarks"
         asChild
+        onClick={() => setActive('bookmarks')}
       >
-        <Link href="/bookmarks">
+        <Link href="/bookmarks" passHref>
           <Bookmark />
           <span className="hidden lg:inline">Bookmarks</span>
         </Link>
@@ -60,11 +65,12 @@ export default async function MenuBar({ className }: MenuBarProps) {
       {/* Add News button */}
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3"
+        className={`flex items-center justify-start gap-3 ${active === 'news' ? 'text-primary' : 'text-secondary'}`}
         title="News"
         asChild
+        onClick={() => setActive('news')}
       >
-        <Link href="/news">
+        <Link href="/news" passHref>
           <Newspaper />
           <span className="hidden lg:inline">News</span>
         </Link>

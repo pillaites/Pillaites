@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home, Newspaper, MessageCircle, Bell } from "lucide-react"; // Added MessageCircle and Bell icons
+import { Bookmark, Home, Newspaper, MessageCircle, Bell } from "lucide-react";
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
@@ -70,8 +70,8 @@ export default async function MenuBar({ className }: MenuBarProps) {
 
       <NotificationsButton
         initialState={{ unreadCount: unreadNotificationsCount }}
-        className={`flex items-center justify-start gap-3 ${selected === 'notifications' ? 'text-yellow-500' : ''}`}
         onClick={() => handleSelect('notifications')}
+        className={`flex items-center justify-start gap-3 ${selected === 'notifications' ? 'text-yellow-500' : ''}`}
       >
         <Bell className={`h-5 w-5 ${selected === 'notifications' ? 'text-yellow-500' : ''}`} />
         <span className={`hidden lg:inline ${selected === 'notifications' ? 'text-yellow-500' : ''}`}>Notifications</span>

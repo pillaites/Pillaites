@@ -10,11 +10,13 @@ import {
   Window,
 } from "stream-chat-react";
 
+// Props interface for the ChatChannel component
 interface ChatChannelProps {
-  open: boolean;
-  openSidebar: () => void;
+  open: boolean; // Determines if the channel is visible
+  openSidebar: () => void; // Function to open the sidebar
 }
 
+// Functional component definition
 const ChatChannel: React.FC<ChatChannelProps> = ({ open, openSidebar }) => {
   return (
     <div className={cn("w-full md:block", !open && "hidden")}>
@@ -29,10 +31,12 @@ const ChatChannel: React.FC<ChatChannelProps> = ({ open, openSidebar }) => {
   );
 };
 
+// Props interface for the CustomChannelHeader component
 interface CustomChannelHeaderProps extends ChannelHeaderProps {
-  openSidebar: () => void;
+  openSidebar: () => void; // Function to open the sidebar
 }
 
+// Functional component definition for the custom channel header
 const CustomChannelHeader: React.FC<CustomChannelHeaderProps> = ({
   openSidebar,
   ...props

@@ -10,9 +10,7 @@ import useInitializeChatClient from "./useInitializeChatClient";
 
 export default function Chat() {
   const chatClient = useInitializeChatClient();
-
   const { resolvedTheme } = useTheme();
-
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   if (!chatClient) {
@@ -20,8 +18,8 @@ export default function Chat() {
   }
 
   return (
-    <main className="relative w-full overflow-hidden rounded-2xl bg-card shadow-sm">
-      <div className="absolute bottom-0 top-0 flex w-full">
+    <main className="relative w-full h-screen bg-card shadow-sm overflow-hidden">
+      <div className="absolute inset-0 flex">
         <StreamChat
           client={chatClient}
           theme={
@@ -33,13 +31,21 @@ export default function Chat() {
           <ChatSidebar
             open={sidebarOpen}
             onClose={() => setSidebarOpen(false)}
+            className="lg:w-1/4 w-3/4" // Adjust width for mobile vs. larger screens
           />
           <ChatChannel
             open={!sidebarOpen}
             openSidebar={() => setSidebarOpen(true)}
+            className={`flex-1 ${sidebarOpen ? 'lg:w-3/4' : 'lg:w-1/4'}`} // Adjust width based on sidebar state
           />
         </StreamChat>
       </div>
+      <button
+        onClick={() => setSidebarOpen(!sidebarOpen)}
+        className="fixed bottom-4 right-4 p-3 bg-primary text-white rounded-full lg:hidden"
+      >
+        {sidebarOpen ? 'Close' : 'Open'} Sidebar
+      </button>
     </main>
   );
 }

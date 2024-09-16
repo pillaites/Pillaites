@@ -4,56 +4,48 @@
 @import "~stream-chat-react/dist/css/v2/index.css";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-@font-face {
-  font-family: 'Poppins';
-  src: url('path-to-poppins-font/Poppins-Regular.woff2') format('woff2'),
-       url('path-to-poppins-font/Poppins-Regular.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-}
-
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 240 10% 10%;
+    --foreground: 220 10% 20%;
     --card: 0 0% 98%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 220 10% 20%;
     --popover: 0 0% 98%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 220 10% 20%;
     --primary: 45 100% 50%;
-    --primary-foreground: 240 10% 10%;
-    --secondary: 240 5% 90%;
-    --secondary-foreground: 240 10% 10%;
-    --muted: 240 5% 95%;
-    --muted-foreground: 240 10% 40%;
+    --primary-foreground: 220 10% 20%;
+    --secondary: 220 15% 90%;
+    --secondary-foreground: 220 10% 20%;
+    --muted: 220 15% 95%;
+    --muted-foreground: 220 10% 40%;
     --accent: 45 100% 50%;
-    --accent-foreground: 240 10% 10%;
-    --destructive: 0 100% 40%;
+    --accent-foreground: 220 10% 20%;
+    --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 100%;
-    --border: 240 5% 85%;
-    --input: 240 5% 85%;
+    --border: 220 15% 90%;
+    --input: 220 15% 90%;
     --ring: 45 100% 50%;
-    --radius: 0.5rem;
+    --radius: 0.25rem;
   }
   .dark {
-    --background: 240 10% 5%;
+    --background: 220 20% 5%;
     --foreground: 0 0% 95%;
-    --card: 240 10% 7%;
+    --card: 220 20% 8%;
     --card-foreground: 0 0% 95%;
-    --popover: 240 10% 7%;
+    --popover: 220 20% 8%;
     --popover-foreground: 0 0% 95%;
     --primary: 45 100% 50%;
-    --primary-foreground: 240 10% 5%;
-    --secondary: 240 5% 15%;
+    --primary-foreground: 220 20% 5%;
+    --secondary: 220 15% 15%;
     --secondary-foreground: 0 0% 95%;
-    --muted: 240 5% 10%;
-    --muted-foreground: 240 5% 60%;
+    --muted: 220 15% 15%;
+    --muted-foreground: 0 0% 70%;
     --accent: 45 100% 50%;
-    --accent-foreground: 240 10% 5%;
-    --destructive: 0 100% 40%;
+    --accent-foreground: 220 20% 5%;
+    --destructive: 0 85% 60%;
     --destructive-foreground: 0 0% 95%;
-    --border: 240 5% 20%;
-    --input: 240 5% 20%;
+    --border: 220 15% 15%;
+    --input: 220 15% 15%;
     --ring: 45 100% 50%;
   }
 }
@@ -267,4 +259,17 @@
 }
 
 .str-chat__header-livestream-left--title {
- 
+  font-family: 'Poppins', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: 1px;
+}
+
+/* Add subtle hover effects */
+.str-chat__message-simple:hover .str-chat__message-text-inner {
+  background-color: hsl(var(--background) / 0.1);
+  border-radius: var(--radius);
+}
+
+.str-chat__message-simple:hover .str-chat__message-sender-name {
+  color: hsl(var(--primary));
+}

@@ -17,16 +17,14 @@ interface ChatSidebarProps {
   onClose: () => void;
 }
 
-export default function ChatSidebar({ open, onClose }: ChatSidebarProps) {
+const ChatSidebar: React.FC<ChatSidebarProps> = ({ open, onClose }) => {
   const { user } = useSession();
-
   const queryClient = useQueryClient();
-
   const { channel } = useChatContext();
 
   useEffect(() => {
     if (channel?.id) {
-      queryClient.invalidateQueries({ queryKey: ["unread-messages-count"] });
+      queryClient.invalidateQueries(["unread-messages-count"]);
     }
   }, [channel?.id, queryClient]);
 
@@ -40,44 +38,39 @@ export default function ChatSidebar({ open, onClose }: ChatSidebarProps) {
         }}
       />
     ),
-    [onClose],
+    [onClose]
   );
 
   return (
     <div
       className={cn(
-        "size-full flex-col border-e md:flex md:w-72",
-        open ? "flex" : "hidden",
+        "flex-col border-e md:flex md:w-72",
+        open ? "flex" : "hidden"
       )}
     >
       <MenuHeader onClose={onClose} />
       <ChannelList
-        filters={{
-          type: "messaging",
-          members: { $in: [user.id] },
-        }}
+        filters={{ type: "messaging", members: { $in: [user.id] } }}
         showChannelSearch
         options={{ state: true, presence: true, limit: 8 }}
         sort={{ last_message_at: -1 }}
         additionalChannelSearchProps={{
           searchForChannels: true,
           searchQueryParams: {
-            channelFilters: {
-              filters: { members: { $in: [user.id] } },
-            },
-          },
+            channelFilters: { filters: { members: { $in: [user.id] } } }
+          }
         }}
         Preview={ChannelPreviewCustom}
       />
     </div>
   );
-}
+};
 
 interface MenuHeaderProps {
   onClose: () => void;
 }
 
-function MenuHeader({ onClose }: MenuHeaderProps) {
+const MenuHeader: React.FC<MenuHeaderProps> = ({ onClose }) => {
   const [showNewChatDialog, setShowNewChatDialog] = useState(false);
 
   return (
@@ -85,7 +78,7 @@ function MenuHeader({ onClose }: MenuHeaderProps) {
       <div className="flex items-center gap-3 p-2">
         <div className="h-full md:hidden">
           <Button size="icon" variant="ghost" onClick={onClose}>
-            <X className="size-5" />
+            <X className="w-5 h-5" />
           </Button>
         </div>
         <h1 className="me-auto text-xl font-bold md:ms-2">Messages</h1>
@@ -95,7 +88,7 @@ function MenuHeader({ onClose }: MenuHeaderProps) {
           title="Start new chat"
           onClick={() => setShowNewChatDialog(true)}
         >
-          <MailPlus className="size-5" />
+          <MailPlus className="w-5 h-5" />
         </Button>
       </div>
       {showNewChatDialog && (
@@ -109,4 +102,6 @@ function MenuHeader({ onClose }: MenuHeaderProps) {
       )}
     </>
   );
-}
+};
+
+export default ChatSidebar;

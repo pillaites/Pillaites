@@ -17,17 +17,13 @@ export default function Chat() {
     return <Loader2 className="mx-auto my-3 animate-spin" />;
   }
 
+  // Determine the theme based on the resolvedTheme
+  const chatTheme = resolvedTheme === "dark" ? "str-chat__theme-dark" : "str-chat__theme-light";
+
   return (
     <main className="relative w-full h-screen bg-card shadow-sm overflow-hidden">
       <div className="absolute inset-0 flex">
-        <StreamChat
-          client={chatClient}
-          theme={
-            resolvedTheme === "dark"
-              ? "str-chat__theme-dark"
-              : "str-chat__theme-light"
-          }
-        >
+        <StreamChat client={chatClient} theme={chatTheme}>
           <ChatSidebar
             open={sidebarOpen}
             onClose={() => setSidebarOpen(false)}

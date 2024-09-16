@@ -1,6 +1,7 @@
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import React from 'react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
+import { Menu } from 'lucide-react';
 import {
   Channel,
   ChannelHeader,
@@ -8,18 +9,18 @@ import {
   MessageInput,
   MessageList,
   Window,
-} from "stream-chat-react";
+} from 'stream-chat-react';
 
-// Props interface for the ChatChannel component
+// Define the props interface for the ChatChannel component
 interface ChatChannelProps {
-  open: boolean; // Determines if the channel is visible
-  openSidebar: () => void; // Function to open the sidebar
+  open: boolean;
+  openSidebar: () => void;
+  className?: string; // Optional className for styling
 }
 
-// Functional component definition
-const ChatChannel: React.FC<ChatChannelProps> = ({ open, openSidebar }) => {
+const ChatChannel: React.FC<ChatChannelProps> = ({ open, openSidebar, className }) => {
   return (
-    <div className={cn("w-full md:block", !open && "hidden")}>
+    <div className={cn("w-full md:block", !open && "hidden", className)}>
       <Channel>
         <Window>
           <CustomChannelHeader openSidebar={openSidebar} />
@@ -31,12 +32,11 @@ const ChatChannel: React.FC<ChatChannelProps> = ({ open, openSidebar }) => {
   );
 };
 
-// Props interface for the CustomChannelHeader component
+// Define the props interface for the CustomChannelHeader component
 interface CustomChannelHeaderProps extends ChannelHeaderProps {
-  openSidebar: () => void; // Function to open the sidebar
+  openSidebar: () => void;
 }
 
-// Functional component definition for the custom channel header
 const CustomChannelHeader: React.FC<CustomChannelHeaderProps> = ({
   openSidebar,
   ...props

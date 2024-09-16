@@ -30,39 +30,39 @@ export default async function MenuBar({ className }: MenuBarProps) {
     <div className={className}>
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3 group"
+        className="flex items-center justify-start gap-3"
         title="Home"
         asChild
       >
         <Link href="/">
-          <Home className="group-hover:text-yellow-500 group-active:text-yellow-600" />
-          <span className="hidden lg:inline group-hover:text-yellow-500 group-active:text-yellow-600">Home</span>
+          <Home />
+          <span className="hidden lg:inline">Home</span>
         </Link>
       </Button>
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3 group"
+        className="flex items-center justify-start gap-3"
         title="News"
         asChild
       >
         <Link href="/news">
-          <Newspaper className="group-hover:text-yellow-500 group-active:text-yellow-600" />
-          <span className="hidden lg:inline group-hover:text-yellow-500 group-active:text-yellow-600">News</span>
+          <Newspaper />
+          <span className="hidden lg:inline">News</span>
         </Link>
       </Button>
-      <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
       <NotificationsButton
         initialState={{ unreadCount: unreadNotificationsCount }}
       />
+      <MessagesButton initialState={{ unreadCount: unreadMessagesCount }} />
       <Button
         variant="ghost"
-        className="flex items-center justify-start gap-3 group"
+        className="flex items-center justify-start gap-3"
         title="Bookmarks"
         asChild
       >
         <Link href="/bookmarks">
-          <Bookmark className="group-hover:text-yellow-500 group-active:text-yellow-600" />
-          <span className="hidden lg:inline group-hover:text-yellow-500 group-active:text-yellow-600">Bookmarks</span>
+          <Bookmark />
+          <span className="hidden lg:inline">Bookmarks</span>
         </Link>
       </Button>
     </div>

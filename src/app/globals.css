@@ -1,54 +1,60 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
 @import "~stream-chat-react/dist/css/v2/index.css";
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+@font-face {
+  font-family: 'Poppins';
+  src: url('path-to-poppins-font/Poppins-Regular.woff2') format('woff2'),
+       url('path-to-poppins-font/Poppins-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222 47% 11%;
-    --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 221 83% 53%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222 47% 11%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222 47% 11%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    --foreground: 240 10% 10%;
+    --card: 0 0% 98%;
+    --card-foreground: 240 10% 10%;
+    --popover: 0 0% 98%;
+    --popover-foreground: 240 10% 10%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 240 10% 10%;
+    --secondary: 240 5% 90%;
+    --secondary-foreground: 240 10% 10%;
+    --muted: 240 5% 95%;
+    --muted-foreground: 240 10% 40%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 240 10% 10%;
+    --destructive: 0 100% 40%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 240 5% 85%;
+    --input: 240 5% 85%;
+    --ring: 45 100% 50%;
     --radius: 0.5rem;
   }
-
   .dark {
-    --background: 222 47% 11%;
-    --foreground: 210 40% 98%;
-    --card: 222 47% 13%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222 47% 13%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217 91% 60%;
-    --primary-foreground: 222 47% 11%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --background: 240 10% 5%;
+    --foreground: 0 0% 95%;
+    --card: 240 10% 7%;
+    --card-foreground: 0 0% 95%;
+    --popover: 240 10% 7%;
+    --popover-foreground: 0 0% 95%;
+    --primary: 45 100% 50%;
+    --primary-foreground: 240 10% 5%;
+    --secondary: 240 5% 15%;
+    --secondary-foreground: 0 0% 95%;
+    --muted: 240 5% 10%;
+    --muted-foreground: 240 5% 60%;
+    --accent: 45 100% 50%;
+    --accent-foreground: 240 10% 5%;
+    --destructive: 0 100% 40%;
+    --destructive-foreground: 0 0% 95%;
+    --border: 240 5% 20%;
+    --input: 240 5% 20%;
+    --ring: 45 100% 50%;
   }
 }
 
@@ -62,7 +68,6 @@
   }
 }
 
-/* Stream Chat Custom Styles */
 .str-chat {
   --str-chat__font-family: 'Poppins', sans-serif;
   --str-chat__primary-color: hsl(var(--primary));
@@ -94,13 +99,14 @@
   display: none;
 }
 
+/* Minimalist styles with yellow accents */
 .str-chat__message-text-inner {
   font-family: 'Poppins', sans-serif;
   border: 1px solid hsl(var(--border));
   padding: 12px;
   background-color: hsl(var(--card));
+  box-shadow: 2px 2px 0 hsl(var(--primary) / 0.3);
   border-radius: var(--radius);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .str-chat__message-input {
@@ -119,7 +125,7 @@
 }
 
 .str-chat__send-button:hover {
-  background-color: hsl(var(--primary) / 0.9);
+  background-color: hsl(var(--accent));
   transform: translateY(-2px);
 }
 
@@ -132,8 +138,8 @@
 .str-chat__message-attachment {
   border: 1px solid hsl(var(--border));
   background-color: hsl(var(--card));
+  box-shadow: 2px 2px 0 hsl(var(--primary) / 0.3);
   border-radius: var(--radius);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .str-chat__header-livestream {
@@ -152,6 +158,7 @@
 }
 
 .str-chat__message-sender-name {
+  font-family: 'Poppins', sans-serif;
   font-weight: 600;
   color: hsl(var(--primary));
 }
@@ -179,7 +186,7 @@
   background: hsl(var(--primary));
 }
 
-/* Additional enhancements */
+/* Additional details and enhancements */
 .str-chat__header-livestream {
   position: relative;
   overflow: hidden;
@@ -197,10 +204,29 @@
 
 .str-chat__message-simple {
   transition: transform 0.2s ease;
+  position: relative;
 }
 
 .str-chat__message-simple:hover {
   transform: translateX(4px);
+}
+
+.str-chat__message-simple::before {
+  content: "";
+  position: absolute;
+  left: -20px;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  background-color: hsl(var(--primary));
+  border-radius: 50%;
+  transform: translateY(-50%);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.str-chat__message-simple:hover::before {
+  opacity: 1;
 }
 
 .str-chat__avatar {
@@ -229,6 +255,7 @@
   border-color: transparent hsl(var(--primary) / 0.3) transparent transparent;
 }
 
+/* Enhance typography */
 .str-chat__message-text-inner {
   font-size: 1rem;
   line-height: 1.6;
@@ -240,43 +267,4 @@
 }
 
 .str-chat__header-livestream-left--title {
-  font-size: 1.5rem;
-  letter-spacing: 1px;
-}
-
-.str-chat__message-simple:hover .str-chat__message-text-inner {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.str-chat__send-button:focus {
-  outline: 2px solid hsl(var(--primary));
-  outline-offset: 2px;
-}
-
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .str-chat__message-text-inner {
-    font-size: 0.9rem;
-  }
-
-  .str-chat__message-sender-name {
-    font-size: 1rem;
-  }
-
-  .str-chat__header-livestream-left--title {
-    font-size: 1.3rem;
-  }
-}
-
-/* Dark mode enhancements */
-.dark .str-chat__message-text-inner {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.dark .str-chat__message-simple:hover .str-chat__message-text-inner {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-}
-
-.dark .str-chat__send-button:focus {
-  outline-color: hsl(var(--primary) / 0.8);
-}
+ 

@@ -60,7 +60,7 @@ export default function Post({ post }: PostProps) {
         )}
       </div>
       <Linkify>
-        <div className="whitespace-pre-line break-words">{post.content}</div>
+        <div className="whitespace-pre-line break-words ml-14">{post.content}</div>
       </Linkify>
       {!!post.attachments.length && (
         <MediaPreviews attachments={post.attachments} />

@@ -1,3 +1,6 @@
+// Add the "use client" directive to specify that this is a Client Component
+"use client";
+
 import { Metadata } from "next";
 import Chat from "./Chat";
 

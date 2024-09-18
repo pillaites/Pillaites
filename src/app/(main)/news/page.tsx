@@ -40,7 +40,7 @@ export default function NewsFeed() {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <p className="text-center text-muted-foreground">
-          No posts found for this user.
+          No news posts available at the moment.
         </p>
       </div>
     );
@@ -50,25 +50,33 @@ export default function NewsFeed() {
     return (
       <div className="flex items-center justify-center w-full h-full">
         <p className="text-center text-destructive">
-          An error occurred while loading posts.
+          An error occurred while loading news posts.
         </p>
       </div>
     );
   }
 
   return (
-    <InfiniteScrollContainer
-      className="space-y-5 w-full h-full"
-      onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
-    >
-      {posts.map((post) => (
-        <Post key={post.id} post={post} />
-      ))}
-      {isFetchingNextPage && (
-        <div className="flex items-center justify-center w-full">
-          <Loader2 className="mx-auto my-3 animate-spin" />
-        </div>
-      )}
-    </InfiniteScrollContainer>
+    <div className="w-full">
+      {/* Heading Section */}
+      <div className="rounded-2xl bg-card p-5 shadow-sm mb-5">
+        <h1 className="text-center text-2xl font-bold">News</h1>
+      </div>
+
+      {/* Posts Section */}
+      <InfiniteScrollContainer
+        className="space-y-5 w-full h-full"
+        onBottomReached={() => hasNextPage && !isFetching && fetchNextPage()}
+      >
+        {posts.map((post) => (
+          <Post key={post.id} post={post} />
+        ))}
+        {isFetchingNextPage && (
+          <div className="flex items-center justify-center w-full">
+            <Loader2 className="mx-auto my-3 animate-spin" />
+          </div>
+        )}
+      </InfiniteScrollContainer>
+    </div>
   );
 }

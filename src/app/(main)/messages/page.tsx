@@ -6,5 +6,9 @@ export const metadata: Metadata = {
 };
 
 export default function Page() {
-  return <Chat />;
+  return (
+    <div className="h-screen w-full">
+      <Chat />
+    </div>
+  );
 }

@@ -6,8 +6,6 @@ export default function ChatContainer() {
   return (
     <div className="container">
       <Chat />
-
-      {/* Inline styles using Next.js specific `style jsx` */}
       <style jsx>{`
         .container {
           display: flex;

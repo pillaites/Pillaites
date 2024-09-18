@@ -22,12 +22,14 @@ export default function ChatSidebar({ isVisible, onSelectChannel }: ChatSidebarP
   const queryClient = useQueryClient();
   const { channel } = useChatContext();
 
+  // Invalidate unread messages count when the channel changes
   useEffect(() => {
     if (channel?.id) {
       queryClient.invalidateQueries({ queryKey: ["unread-messages-count"] });
     }
   }, [channel?.id, queryClient]);
 
+  // Custom channel preview component
   const ChannelPreviewCustom = useCallback(
     (props: ChannelPreviewUIComponentProps) => (
       <ChannelPreviewMessenger
@@ -38,14 +40,14 @@ export default function ChatSidebar({ isVisible, onSelectChannel }: ChatSidebarP
         }}
       />
     ),
-    [onSelectChannel],
+    [onSelectChannel]
   );
 
   return (
     <div
       className={cn(
         "h-full w-full flex-col border-e md:flex md:w-72",
-        isVisible ? "flex" : "hidden",
+        isVisible ? "flex" : "hidden"
       )}
     >
       <MenuHeader />

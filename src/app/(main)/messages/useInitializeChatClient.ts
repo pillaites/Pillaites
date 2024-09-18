@@ -1,7 +1,7 @@
 import kyInstance from "@/lib/ky";
 import { useEffect, useState } from "react";
 import { StreamChat } from "stream-chat";
-import { useSession } from "../SessionProvider"; 
+import { useSession } from "../SessionProvider";
 
 export default function useInitializeChatClient() {
   const { user } = useSession();
@@ -10,29 +10,40 @@ export default function useInitializeChatClient() {
   useEffect(() => {
     const client = StreamChat.getInstance(process.env.NEXT_PUBLIC_STREAM_KEY!);
 
-    client
-      .connectUser(
-        {
-          id: user.id,
-          username: user.username,
-          name: user.displayName,
-          image: user.avatarUrl,
-        },
-        async () =>
-          kyInstance
-            .get("/api/get-token")
-            .json<{ token: string }>()
-            .then((data) => data.token),
-      )
-      .catch((error) => console.error("Failed to connect user", error))
-      .then(() => setChatClient(client));
+    const connectUser = async () => {
+      try {
+        const { token } = await kyInstance.get("/api/get-token").json<{ token: string }>();
+        
+        await client.connectUser(
+          {
+            id: user.id,
+            username: user.username,
+            name: user.displayName,
+            image: user.avatarUrl,
+          },
+          token
+        );
+
+        setChatClient(client);
+      } catch (error) {
+        console.error("Failed to connect user", error);
+      }
+    };
+
+    connectUser();
 
     return () => {
-      setChatClient(null);
-      client
-        .disconnectUser()
-        .catch((error) => console.error("Failed to disconnect user", error))
-        .then(() => console.log("Connection closed"));
+      const disconnectUser = async () => {
+        setChatClient(null);
+        try {
+          await client.disconnectUser();
+          console.log("User disconnected successfully");
+        } catch (error) {
+          console.error("Failed to disconnect user", error);
+        }
+      };
+
+      disconnectUser();
     };
   }, [user.id, user.username, user.displayName, user.avatarUrl]);
 

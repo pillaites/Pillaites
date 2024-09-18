@@ -1,4 +1,4 @@
-import Chat from "./Chat";
+import Chat from "@/components/Chat";
 
 // Exporting metadata in a Server Component
 export const metadata = {
@@ -7,5 +7,5 @@ export const metadata = {
 
 // Page component, marked as Server Component (no "use client")
 export default function MessagesPage() {
-  return <ChatContainer />;
+  return <Chat />;
 }

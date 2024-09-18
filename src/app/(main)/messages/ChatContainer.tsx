@@ -1,6 +1,6 @@
 "use client";
 
-import Chat from "@/components/Chat"; // Ensure this path is correct
+import Chat from "./Chat";
 
 export default function ChatContainer() {
   return (

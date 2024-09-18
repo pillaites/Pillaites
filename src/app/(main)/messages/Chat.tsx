@@ -1,5 +1,3 @@
-"use client";
-
 import { Loader2 } from "lucide-react";
 import { useTheme } from "next-themes";
 import { useState } from "react";
@@ -11,14 +9,14 @@ import useInitializeChatClient from "./useInitializeChatClient";
 export default function Chat() {
   const chatClient = useInitializeChatClient();
   const { resolvedTheme } = useTheme();
-  const [activeView, setActiveView] = useState('sidebar');
+  const [activeView, setActiveView] = useState<"sidebar" | "chat">("sidebar");
 
   if (!chatClient) {
     return <Loader2 className="mx-auto my-3 animate-spin" />;
   }
 
   return (
-    <main className="relative w-full h-screen overflow-hidden bg-card">
+    <main className="relative h-screen w-full overflow-hidden bg-card shadow-sm">
       <StreamChat
         client={chatClient}
         theme={
@@ -27,12 +25,15 @@ export default function Chat() {
             : "str-chat__theme-light"
         }
       >
-        <div className="flex flex-col h-full">
-          {activeView === 'sidebar' ? (
-            <ChatSidebar onSelectChannel={() => setActiveView('channel')} />
-          ) : (
-            <ChatChannel onBackToList={() => setActiveView('sidebar')} />
-          )}
+        <div className="flex h-full">
+          <ChatSidebar
+            isVisible={activeView === "sidebar"}
+            onSelectChannel={() => setActiveView("chat")}
+          />
+          <ChatChannel
+            isVisible={activeView === "chat"}
+            onOpenSidebar={() => setActiveView("sidebar")}
+          />
         </div>
       </StreamChat>
     </main>

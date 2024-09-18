@@ -1,7 +1,5 @@
-'use client';
-
-import TrendsSidebar from "@/components/TrendsSidebar";
 import { Metadata } from "next";
+import TrendsSidebar from "@/components/TrendsSidebar";
 import Bookmarks from "./Bookmarks";
 
 export const metadata: Metadata = {
@@ -15,9 +13,9 @@ export default function Page() {
         <div className="rounded-2xl bg-card p-5 shadow-sm">
           <h1 className="text-center text-2xl font-bold">Bookmarks</h1>
         </div>
-        <Bookmarks />
+        <Bookmarks /> {/* Client component */}
       </div>
-      <TrendsSidebar />
+      <TrendsSidebar /> {/* Assuming this is a server component */}
     </main>
   );
 }

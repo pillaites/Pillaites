@@ -5,6 +5,9 @@ export const metadata: Metadata = {
   title: "Messages",
 };
 
+// Add "use client" directive to convert this component to a Client Component
+"use client";
+
 export default function Page() {
   return (
     <div className="container">

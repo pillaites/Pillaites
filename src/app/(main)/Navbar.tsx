@@ -12,8 +12,8 @@ export default function Navbar() {
           <Image src={logo} alt="Logo" width={40} height={40} className="object-contain" />
         </Link>
         <div className="flex-grow"></div>  
-        <SearchField className="ml-4" />  
-        <UserButton className="ml-4" />  
+        <SearchField className="mr-2" />  {/* Adjusted margin-right instead of ml */}
+        <UserButton className="mr-2" />    {/* Reduced the margin */}
       </div>
     </header>
   );

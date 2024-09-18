@@ -1,50 +1,32 @@
 import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { Menu } from "lucide-react";
+import { ArrowLeft } from "lucide-react";
 import {
   Channel,
   ChannelHeader,
-  ChannelHeaderProps,
   MessageInput,
   MessageList,
   Window,
 } from "stream-chat-react";
 
 interface ChatChannelProps {
-  open: boolean;
-  openSidebar: () => void;
+  onBackToList: () => void;
 }
 
-export default function ChatChannel({ open, openSidebar }: ChatChannelProps) {
+export default function ChatChannel({ onBackToList }: ChatChannelProps) {
   return (
-    <div className={cn("w-full md:block", !open && "hidden")}>
+    <div className="w-full h-full flex flex-col">
+      <div className="flex items-center p-2 border-b">
+        <Button variant="ghost" size="icon" onClick={onBackToList} className="mr-2">
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <ChannelHeader />
+      </div>
       <Channel>
         <Window>
-          <CustomChannelHeader openSidebar={openSidebar} />
           <MessageList />
           <MessageInput />
         </Window>
       </Channel>
-    </div>
-  );
-}
-
-interface CustomChannelHeaderProps extends ChannelHeaderProps {
-  openSidebar: () => void;
-}
-
-function CustomChannelHeader({
-  openSidebar,
-  ...props
-}: CustomChannelHeaderProps) {
-  return (
-    <div className="flex items-center gap-3">
-      <div className="h-full p-2 md:hidden">
-        <Button size="icon" variant="ghost" onClick={openSidebar}>
-          <Menu className="size-5" />
-        </Button>
-      </div>
-      <ChannelHeader {...props} />
     </div>
   );
 }

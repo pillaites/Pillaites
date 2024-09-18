@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { ArrowLeft } from "lucide-react";
 import {
   Channel,
@@ -9,24 +10,31 @@ import {
 } from "stream-chat-react";
 
 interface ChatChannelProps {
-  onBackToList: () => void;
+  isVisible: boolean;
+  onOpenSidebar: () => void;
 }
 
-export default function ChatChannel({ onBackToList }: ChatChannelProps) {
+export default function ChatChannel({ isVisible, onOpenSidebar }: ChatChannelProps) {
   return (
-    <div className="w-full h-full flex flex-col">
-      <div className="flex items-center p-2 border-b">
-        <Button variant="ghost" size="icon" onClick={onBackToList} className="mr-2">
-          <ArrowLeft className="h-5 w-5" />
-        </Button>
-        <ChannelHeader />
-      </div>
+    <div className={cn("h-full w-full", isVisible ? "block" : "hidden")}>
       <Channel>
         <Window>
+          <CustomChannelHeader onOpenSidebar={onOpenSidebar} />
           <MessageList />
           <MessageInput />
         </Window>
       </Channel>
+    </div>
+  );
+}
+
+function CustomChannelHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
+  return (
+    <div className="flex items-center gap-3 p-2 bg-card border-b">
+      <Button size="icon" variant="ghost" onClick={onOpenSidebar} className="md:hidden">
+        <ArrowLeft className="size-5" />
+      </Button>
+      <ChannelHeader />
     </div>
   );
 }

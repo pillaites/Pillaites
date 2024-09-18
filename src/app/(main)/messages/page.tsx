@@ -1,12 +1,10 @@
-// Add the "use client" directive to specify that this is a Client Component
+// src/app/(main)/messages/page.tsx
 "use client";
 
-import { Metadata } from "next";
 import Chat from "./Chat";
 
-export const metadata: Metadata = {
-  title: "Messages",
-};
+// Import metadata from the separate file if needed
+import { metadata } from "./metadata"; // Uncomment if needed
 
 export default function Page() {
   return (

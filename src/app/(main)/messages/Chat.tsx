@@ -17,7 +17,7 @@ export default function Chat() {
   }
 
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-card shadow-sm">
+    <main className="relative h-screen w-screen overflow-hidden bg-card shadow-sm">
       <StreamChat
         client={chatClient}
         theme={
@@ -26,15 +26,13 @@ export default function Chat() {
             : "str-chat__theme-light"
         }
       >
-        <div className="flex h-full">
-          <ChatSidebar
-            isVisible={activeView === "sidebar"}
-            onSelectChannel={() => setActiveView("chat")}
-          />
-          <ChatChannel
-            isVisible={activeView === "chat"}
-            onOpenSidebar={() => setActiveView("sidebar")}
-          />
+        <div className="flex flex-col h-full">
+          <div className={`flex-1 ${activeView === "sidebar" ? "block" : "hidden"}`}>
+            <ChatSidebar onSelectChannel={() => setActiveView("chat")} />
+          </div>
+          <div className={`flex-1 ${activeView === "chat" ? "block" : "hidden"}`}>
+            <ChatChannel onOpenSidebar={() => setActiveView("sidebar")} />
+          </div>
         </div>
       </StreamChat>
     </main>

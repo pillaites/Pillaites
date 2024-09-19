@@ -38,14 +38,14 @@ export default function ChatSidebar({ isVisible, onSelectChannel }: ChatSidebarP
         }}
       />
     ),
-    [onSelectChannel]
+    [onSelectChannel],
   );
 
   return (
     <div
       className={cn(
         "h-full w-full flex-col border-e md:flex md:w-72",
-        isVisible ? "flex" : "hidden"
+        isVisible ? "flex" : "hidden",
       )}
     >
       <MenuHeader />

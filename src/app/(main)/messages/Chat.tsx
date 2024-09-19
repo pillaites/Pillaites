@@ -10,20 +10,17 @@ export default function Chat() {
   return (
     <div className="flex flex-col h-full">
       {/* Sidebar view */}
-      <div className={`flex-1 ${activeView === "sidebar" ? "block" : "hidden"}`}>
+      {activeView === "sidebar" && (
         <ChatSidebar 
           isVisible={activeView === "sidebar"} 
           onSelectChannel={() => setActiveView("chat")} 
         />
-      </div>
+      )}
 
       {/* Chat view */}
-      <div className={`flex-1 ${activeView === "chat" ? "block" : "hidden"}`}>
-        <ChatChannel 
-          isVisible={activeView === "chat"} 
-          onOpenSidebar={() => setActiveView("sidebar")} 
-        />
-      </div>
+      {activeView === "chat" && (
+        <ChatChannel onOpenSidebar={() => setActiveView("sidebar")} />
+      )}
     </div>
   );
 }

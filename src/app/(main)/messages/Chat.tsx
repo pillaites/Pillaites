@@ -1,4 +1,3 @@
-// Add this at the very top of the file
 "use client";
 
 import { useState } from "react";
@@ -20,7 +19,10 @@ export default function Chat() {
 
       {/* Chat view */}
       <div className={`flex-1 ${activeView === "chat" ? "block" : "hidden"}`}>
-        <ChatChannel onOpenSidebar={() => setActiveView("sidebar")} />
+        <ChatChannel 
+          isVisible={activeView === "chat"} 
+          onOpenSidebar={() => setActiveView("sidebar")} 
+        />
       </div>
     </div>
   );

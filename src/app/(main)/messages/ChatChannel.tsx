@@ -10,13 +10,12 @@ import {
 } from "stream-chat-react";
 
 interface ChatChannelProps {
-  isVisible: boolean;
   onOpenSidebar: () => void;
 }
 
-export default function ChatChannel({ isVisible, onOpenSidebar }: ChatChannelProps) {
+export default function ChatChannel({ onOpenSidebar }: ChatChannelProps) {
   return (
-    <div className={cn("h-full w-full", isVisible ? "block" : "hidden")}>
+    <div className="h-full w-full">
       <Channel>
         <Window>
           <CustomChannelHeader onOpenSidebar={onOpenSidebar} />
@@ -28,10 +27,19 @@ export default function ChatChannel({ isVisible, onOpenSidebar }: ChatChannelPro
   );
 }
 
-function CustomChannelHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
+interface CustomChannelHeaderProps {
+  onOpenSidebar: () => void;
+}
+
+function CustomChannelHeader({ onOpenSidebar }: CustomChannelHeaderProps) {
   return (
     <div className="flex items-center gap-3 p-2 bg-card border-b">
-      <Button size="icon" variant="ghost" onClick={onOpenSidebar} className="md:hidden">
+      <Button 
+        size="icon" 
+        variant="ghost" 
+        onClick={onOpenSidebar} 
+        className="md:hidden"
+      >
         <ArrowLeft className="size-5" />
       </Button>
       <ChannelHeader />

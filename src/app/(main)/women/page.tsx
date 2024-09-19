@@ -1,85 +1,52 @@
+"use client"; // This directive marks the file as a client component
+
 import React, { useState } from 'react';
 
 const ConfessionForm = () => {
   const [formData, setFormData] = useState({
     name: '',
-    email: '',
-    confession: ''
+    message: ''
   });
-  const [statusMessage, setStatusMessage] = useState('');
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    setFormData((prevData) => ({
-      ...prevData,
+    setFormData({
+      ...formData,
       [name]: value
-    }));
+    });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    try {
-      const res = await fetch('/api/sendConfession', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (res.ok) {
-        setStatusMessage('Your confession has been sent successfully.');
-        setFormData({ name: '', email: '', confession: '' });
-      } else {
-        setStatusMessage('There was an error sending your confession. Please try again.');
-      }
-    } catch (err) {
-      setStatusMessage('An unexpected error occurred. Please try again.');
-    }
+    console.log('Form submitted:', formData);
   };
 
   return (
     <div>
-      <h1>Share Your Experience</h1>
+      <h1>Confession Form</h1>
       <form onSubmit={handleSubmit}>
         <div>
-          <label htmlFor="name">Name (Optional)</label>
+          <label htmlFor="name">Name:</label>
           <input
             type="text"
             id="name"
             name="name"
             value={formData.name}
-            onChange={handleChange}
+            onChange={handleInputChange}
           />
         </div>
-
         <div>
-          <label htmlFor="email">Email (Optional)</label>
+          <label htmlFor="message">Message:</label>
           <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
+            type="text"
+            id="message"
+            name="message"
+            value={formData.message}
+            onChange={handleInputChange}
           />
         </div>
-
-        <div>
-          <label htmlFor="confession">Your Confession</label>
-          <textarea
-            id="confession"
-            name="confession"
-            rows={6}
-            value={formData.confession}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
         <button type="submit">Submit</button>
       </form>
-      {statusMessage && <p>{statusMessage}</p>}
     </div>
   );
 };

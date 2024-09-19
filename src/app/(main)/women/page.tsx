@@ -1,4 +1,4 @@
-"use client";
+"use client";  // Add this directive to make the component a client-side component
 
 import React, { useState } from 'react';
 

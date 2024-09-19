@@ -14,7 +14,7 @@ interface ChatChannelProps {
   onOpenSidebar: () => void;
 }
 
-export default function ChatChannel({ isVisible, onOpenSidebar }: ChatChannelProps) {
+const ChatChannel: React.FC<ChatChannelProps> = ({ isVisible, onOpenSidebar }) => {
   return (
     <div className={cn("h-full w-full", isVisible ? "block" : "hidden")}>
       <Channel>
@@ -26,15 +26,26 @@ export default function ChatChannel({ isVisible, onOpenSidebar }: ChatChannelPro
       </Channel>
     </div>
   );
+};
+
+interface CustomChannelHeaderProps {
+  onOpenSidebar: () => void;
 }
 
-function CustomChannelHeader({ onOpenSidebar }: { onOpenSidebar: () => void }) {
+const CustomChannelHeader: React.FC<CustomChannelHeaderProps> = ({ onOpenSidebar }) => {
   return (
     <div className="flex items-center gap-3 p-2 bg-card border-b">
-      <Button size="icon" variant="ghost" onClick={onOpenSidebar} className="md:hidden">
+      <Button 
+        size="icon" 
+        variant="ghost" 
+        onClick={onOpenSidebar} 
+        className="md:hidden"
+      >
         <ArrowLeft className="size-5" />
       </Button>
       <ChannelHeader />
     </div>
   );
-}
+};
+
+export default ChatChannel;

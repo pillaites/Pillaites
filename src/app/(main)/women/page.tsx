@@ -20,7 +20,7 @@ const ConfessionForm = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch('/api/send-confession', {
+      const res = await fetch('/api/sendConfession', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

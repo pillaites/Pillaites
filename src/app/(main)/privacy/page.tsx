@@ -4,14 +4,14 @@ const PrivacyPolicy: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto p-5 bg-card text-foreground rounded-lg shadow-md">
       <h1 className="text-center text-3xl font-semibold mb-5">Privacy Policy</h1>
-      <p className="text-sm text-muted-foreground"><strong>Effective Date:</strong> [Insert Date]</p>
+      <p className="text-sm text-muted-foreground"><strong>Effective Date:</strong> 20-09-2024 </p>
 
       <div className="bg-secondary rounded-lg p-5 border border-border shadow">
         <section className="mb-8">
           <h2 className="text-2xl text-primary font-medium border-b-2 border-accent pb-2 mb-3">1. Introduction</h2>
           <p>
-            At [App Name], your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your 
-            information when you use our social media platform designed for students at [College Name]. By using our platform, 
+            At Pillaites, your privacy is important to us. This Privacy Policy outlines how we collect, use, and protect your 
+            information when you use our social media platform designed for students at Pillai. By using our platform, 
             you agree to the practices outlined in this policy.
           </p>
         </section>
@@ -71,13 +71,13 @@ const PrivacyPolicy: React.FC = () => {
             <li>Limiting how your information is used.</li>
             <li>Withdrawing consent for data processing (which may affect your ability to use the platform).</li>
           </ul>
-          <p>To exercise these rights, please contact us at [Contact Information].</p>
+          <p>To exercise these rights, please contact us at pillaitesdb@gmail.com .</p>
         </section>
 
         <section className="mb-8">
           <h2 className="text-2xl text-primary font-medium border-b-2 border-accent pb-2 mb-3">7. Children’s Privacy</h2>
           <p>
-            This platform is intended for students of [College Name]. We do not knowingly collect personal information from 
+            This platform is intended for students of Pillai College. We do not knowingly collect personal information from 
             individuals under the age of 13. If we discover that we have collected such information, we will take steps to 
             delete it.
           </p>
@@ -93,10 +93,9 @@ const PrivacyPolicy: React.FC = () => {
           <h2 className="text-2xl text-primary font-medium border-b-2 border-accent pb-2 mb-3">9. Contact Us</h2>
           <p>
             If you have questions or concerns about this Privacy Policy, please reach out to us at:<br />
-            [App Name]<br />
-            [Company/College Address]<br />
-            Email: [email address]<br />
-            Phone: [phone number]
+            Pillaites<br />
+            pillaitesdb@gmail.com<br />
+            
           </p>
         </section>
       </div>

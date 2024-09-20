@@ -1,44 +1,41 @@
-"use client"; // Mark the component as a client component
+// src/app/(main)/peekaboo/page.tsx
+
+"use client"; // Ensure this component is a client component
 
 import React, { useState } from 'react';
 
-interface Image {
-    url: string;
-}
-
-const Page: React.FC = () => {
+const ImageSearchPage: React.FC = () => {
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState<Image[]>([]);
-    const [error, setError] = useState<string | null>(null);
+    const [images, setImages] = useState<string[]>([]);
+    const [error, setError] = useState('');
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError(null);
+    const handleSearch = async (event: React.FormEvent<HTMLFormElement>) => {
+        event.preventDefault();
+        setError('');
+        
+        if (!query.trim()) {
+            setError('Please enter a search term.');
+            return;
+        }
 
         try {
-            const images = await searchImagesWithGoogle(query);
-            setResults(images);
+            const apiKey = 'YOUR_API_KEY'; // Replace with your actual API key
+            const apiUrl = `https://api.example.com/images?q=${encodeURIComponent(query)}&key=${apiKey}`;
+            
+            const response = await fetch(apiUrl);
+            if (!response.ok) throw new Error('Failed to fetch images.');
+
+            const data = await response.json();
+            setImages(data.images.map((img: { url: string }) => img.url));
         } catch (err) {
-            setError('Error fetching images');
+            setError(`Error fetching images: ${err instanceof Error ? err.message : 'Unknown error'}`);
         }
-    };
-
-    const searchImagesWithGoogle = async (query: string): Promise<Image[]> => {
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY; // Use your environment variable here
-        const response = await fetch(`https://api.example.com/images?q=${encodeURIComponent(query)}&key=${apiKey}`);
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        return data.images.map((img: { url: string }) => ({ url: img.url }));
     };
 
     return (
         <div>
             <h1>Image Search</h1>
-            <form onSubmit={handleSubmit}>
+            <form onSubmit={handleSearch}>
                 <input
                     type="text"
                     value={query}
@@ -47,25 +44,14 @@ const Page: React.FC = () => {
                 />
                 <button type="submit">Search</button>
             </form>
-
             {error && <p style={{ color: 'red' }}>{error}</p>}
-
             <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-                {results.length > 0 ? (
-                    results.map((image, index) => (
-                        <img
-                            key={index}
-                            src={image.url}
-                            alt="Image"
-                            style={{ width: '200px', margin: '10px' }}
-                        />
-                    ))
-                ) : (
-                    <p>No images found.</p>
-                )}
+                {images.map((imgUrl, index) => (
+                    <img key={index} src={imgUrl} alt="Image result" style={{ width: '200px', margin: '10px' }} />
+                ))}
             </div>
         </div>
     );
 };
 
-export default Page;
+export default ImageSearchPage;

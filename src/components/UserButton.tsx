@@ -75,6 +75,14 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
+        {/* Add the Peek a Boo Menu Item */}
+        <Link href="/peek-a-boo">
+          <DropdownMenuItem>
+            <Search className="mr-2 size-4" /> {/* Use a suitable icon for search */}
+            Peek a Boo
+          </DropdownMenuItem>
+        </Link>
+
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Monitor className="mr-2 size-4" />

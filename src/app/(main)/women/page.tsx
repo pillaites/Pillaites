@@ -41,8 +41,8 @@ const ReportForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background text-foreground transition-colors duration-300 p-4">
-      <div className="w-full max-w-sm bg-card p-6 rounded-xl shadow-lg mx-auto mt-8"> {/* Adjusted mt-8 for spacing */}
+    <div className="min-h-screen flex flex-col items-center justify-start bg-background text-foreground transition-colors duration-300 p-4">
+      <div className="w-full max-w-md bg-card p-6 rounded-xl shadow-lg mt-8"> {/* Adjusted to mt-8 for spacing */}
         <h1 className="text-2xl font-semibold mb-6 text-center">Report Form</h1>
 
         {success && (

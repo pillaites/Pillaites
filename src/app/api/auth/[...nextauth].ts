@@ -3,12 +3,12 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 
-// Extend the DefaultSession type to include id
+// Extend DefaultSession to include user ID
 interface User extends DefaultSession["user"] {
   id: string;
 }
 
-// Extend the JWT token type if you're using JWT
+// Extend the JWT token to include user ID
 interface Token {
   id: string;
 }
@@ -19,24 +19,24 @@ export const authOptions: AuthOptions = {
       clientId: process.env.GOOGLE_CLIENT_ID || '',
       clientSecret: process.env.GOOGLE_CLIENT_SECRET || '',
     }),
-    // Add other providers here
+    // Add other providers here if needed
   ],
   adapter: PrismaAdapter(prisma),
   callbacks: {
     async session({ session, token }) {
       if (session?.user) {
-        session.user.id = (token as Token).id; // Add user ID to session
+        session.user.id = (token as Token).id; // Attach user ID from token to session
       }
       return session;
     },
     async jwt({ token, user }) {
       if (user) {
-        token.id = user.id; // Add user ID to token if user object exists
+        token.id = user.id; // Set user ID in token if user exists
       }
       return token;
     },
   },
 };
 
-// Export NextAuth with extended types
+// Export NextAuth configuration
 export default NextAuth(authOptions);

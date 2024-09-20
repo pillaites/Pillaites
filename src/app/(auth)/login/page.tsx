@@ -1,4 +1,3 @@
-
 import loginImage from "@/assets/login-image.jpg";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -29,7 +28,7 @@ export default function Page() {
             </Link>
             <Link
               href="/ex-pillaites"
-              className="block text-center bg-yellow-400 text-white py-2 px-4 rounded-md hover:bg-yellow-500 transition-colors duration-300"
+              className="block text-center text-xl font-bold text-primary hover:underline"
             >
               Are you an Ex-Pillait? Click here
             </Link>

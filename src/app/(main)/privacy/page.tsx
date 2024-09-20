@@ -5,7 +5,6 @@ const PrivacyPolicy: React.FC = () => {
     <div style={{ padding: '20px', fontFamily: 'Arial, sans-serif' }}>
       <h1>Privacy Policy</h1>
       <p><strong>Effective Date:</strong> [Insert Date]</p>
-      <br>
         
       <h2>1. Introduction</h2>
       <p>
@@ -14,7 +13,6 @@ const PrivacyPolicy: React.FC = () => {
         you agree to the practices outlined in this policy.
       </p>
 
-      <br> 
       <h2>2. Information We Collect</h2>
       <p>We collect the following types of information:</p>
       <ul>
@@ -28,8 +26,7 @@ const PrivacyPolicy: React.FC = () => {
         <li><strong>Cookies:</strong> We use cookies to store preferences and enhance your experience. You can control 
         cookies via your browser settings.</li>
       </ul>
-
-      <br>  
+  
       <h2>3. How We Use Your Information</h2>
       <p>The information we collect is used for:</p>
       <ul>
@@ -39,8 +36,7 @@ const PrivacyPolicy: React.FC = () => {
         <li>Sending you notifications or updates related to the app.</li>
         <li>Offering personalized content and recommendations.</li>
       </ul>
-
-      <br>  
+ 
       <h2>4. Sharing Your Information</h2>
       <p>We will not sell or rent your personal information. However, we may share your data with:</p>
       <ul>
@@ -51,13 +47,11 @@ const PrivacyPolicy: React.FC = () => {
         <li><strong>Legal Authorities:</strong> If required by law or to protect the rights and safety of our users, we may 
         share data with government authorities.</li>
       </ul>
-
-      <br>  
+ 
       <h2>5. Data Security</h2>
       <p>We take reasonable measures to protect your personal data. However, no online service is completely secure, so we 
         cannot guarantee absolute security of your information.</p>
-
-      <br>  
+ 
       <h2>6. Your Rights</h2>
       <p>As a user, you have rights over your personal data, including:</p>
       <ul>
@@ -67,7 +61,6 @@ const PrivacyPolicy: React.FC = () => {
       </ul>
       <p>To exercise these rights, please contact us at [Contact Information].</p>
 
-      <br>  
       <h2>7. Children’s Privacy</h2>
       <p>
         This platform is intended for students of [College Name]. We do not knowingly collect personal information from 
@@ -75,12 +68,10 @@ const PrivacyPolicy: React.FC = () => {
         delete it.
       </p>
 
-      <br> 
       <h2>8. Changes to This Policy</h2>
       <p>We may update this Privacy Policy from time to time. Any changes will be posted on this page, and you will be 
         notified of significant updates.</p>
-
-      <br>  
+ 
       <h2>9. Contact Us</h2>
       <p>
         If you have questions or concerns about this Privacy Policy, please reach out to us at:<br />

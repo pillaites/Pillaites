@@ -21,9 +21,11 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
   try {
     const { token: accessToken } = await oauth2Client.getAccessToken();
 
-    // Create a transporter with logging and debugging enabled
+    // Create a transporter using SMTP configuration
     const transporter = nodemailer.createTransport({
-      service: 'Gmail',
+      host: 'smtp.gmail.com', // Gmail SMTP server
+      port: 465,              // SSL port
+      secure: true,           // Use SSL
       auth: {
         type: 'OAuth2',
         user: process.env.EMAIL_USER,

@@ -1,15 +1,16 @@
 "use client"; // This directive marks the file as a client component
 
 import React, { useState } from 'react';
+import './src/app/global.css'; // Import your global CSS styles
 
 const ConfessionForm = () => {
   const [formData, setFormData] = useState({
     name: '',
     message: ''
   });
-  const [loading, setLoading] = useState(false); // To show loading state
-  const [error, setError] = useState<string | null>(null); // Error handling
-  const [success, setSuccess] = useState(false); // Success state
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -38,7 +39,7 @@ const ConfessionForm = () => {
         throw new Error('Failed to send confession');
       }
 
-      setFormData({ name: '', message: '' }); // Reset form on success
+      setFormData({ name: '', message: '' });
       setSuccess(true);
     } catch (err) {
       setError((err as Error).message);
@@ -48,14 +49,14 @@ const ConfessionForm = () => {
   };
 
   return (
-    <div>
-      <h1>Confession Form</h1>
+    <div className="form-container">
+      <h1 className="form-title">Confession Form</h1>
 
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {success && <p style={{ color: 'green' }}>Confession sent successfully!</p>}
+      {error && <p className="error-message">{error}</p>}
+      {success && <p className="success-message">Confession sent successfully!</p>}
 
-      <form onSubmit={handleSubmit}>
-        <div>
+      <form className="confession-form" onSubmit={handleSubmit}>
+        <div className="form-group">
           <label htmlFor="name">Name:</label>
           <input
             type="text"
@@ -66,7 +67,7 @@ const ConfessionForm = () => {
             required
           />
         </div>
-        <div>
+        <div className="form-group">
           <label htmlFor="message">Message:</label>
           <input
             type="text"
@@ -77,7 +78,7 @@ const ConfessionForm = () => {
             required
           />
         </div>
-        <button type="submit" disabled={loading}>
+        <button className="submit-button" type="submit" disabled={loading}>
           {loading ? 'Sending...' : 'Submit'}
         </button>
       </form>

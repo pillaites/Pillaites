@@ -26,14 +26,10 @@ export default function NewChatDialog({
   onChatCreated,
 }: NewChatDialogProps) {
   const { client, setActiveChannel } = useChatContext();
-
   const { toast } = useToast();
-
   const { user: loggedInUser } = useSession();
-
   const [searchInput, setSearchInput] = useState("");
   const searchInputDebounced = useDebounce(searchInput);
-
   const [selectedUsers, setSelectedUsers] = useState<
     UserResponse<DefaultStreamChatGenerics>[]
   >([]);
@@ -88,7 +84,7 @@ export default function NewChatDialog({
 
   return (
     <Dialog open onOpenChange={onOpenChange}>
-      <DialogContent className="bg-card p-0">
+      <DialogContent className="bg-card p-0 sm:max-w-[425px]">
         <DialogHeader className="px-6 pt-6">
           <DialogTitle>New chat</DialogTitle>
         </DialogHeader>
@@ -118,7 +114,7 @@ export default function NewChatDialog({
             </div>
           )}
           <hr />
-          <div className="h-96 overflow-y-auto">
+          <div className="max-h-60 overflow-y-auto">
             {isSuccess &&
               data.users.map((user) => (
                 <UserResult

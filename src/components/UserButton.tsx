@@ -4,7 +4,7 @@ import { logout } from "@/app/(auth)/actions";
 import { useSession } from "@/app/(main)/SessionProvider";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon, Calendar, Vote, Info, Beer } from "lucide-react"; // Added info and beer icons
+import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon, Calendar, Vote, Info, Beer } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import {
@@ -40,7 +40,6 @@ export default function UserButton({ className }: UserButtonProps) {
         <DropdownMenuLabel>Logged in as @{user.username}</DropdownMenuLabel>
         <DropdownMenuSeparator />
 
-        {/* Profile */}
         <Link href={`/users/${user.username}`}>
           <DropdownMenuItem>
             <UserIcon className="mr-2 size-4" />
@@ -48,7 +47,6 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
-        {/* Calendar */}
         <Link href="/calendar">
           <DropdownMenuItem>
             <Calendar className="mr-2 size-4" />
@@ -56,7 +54,6 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
-        {/* Voting */}
         <Link href="/voting">
           <DropdownMenuItem>
             <Vote className="mr-2 size-4" />
@@ -64,7 +61,6 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
-        {/* About */}
         <Link href="/about">
           <DropdownMenuItem>
             <Info className="mr-2 size-4" />
@@ -72,7 +68,6 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
-        {/* Women */}
         <Link href="/women">
           <DropdownMenuItem>
             <Beer className="mr-2 size-4" />
@@ -80,7 +75,6 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
-        {/* Theme Selection */}
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Monitor className="mr-2 size-4" />
@@ -107,7 +101,6 @@ export default function UserButton({ className }: UserButtonProps) {
 
         <DropdownMenuSeparator />
 
-        {/* Logout */}
         <DropdownMenuItem
           onClick={() => {
             queryClient.clear();

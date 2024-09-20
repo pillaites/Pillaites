@@ -76,9 +76,9 @@ export default function UserButton({ className }: UserButtonProps) {
         </Link>
 
         {/* Add the Peek a Boo Menu Item */}
-        <Link href="https://supreme-pillaite.github.io/PeeKaboo/">
+        <Link href="https://supreme-pillaite.github.io/PeeKaboo/" passHref>
           <DropdownMenuItem>
-            <Search className="mr-2 size-4" /> {/* Now the Search icon should be recognized */}
+            <Search className="mr-2 size-4" />
             PeekaBoo
           </DropdownMenuItem>
         </Link>

@@ -79,7 +79,7 @@ export default function UserButton({ className }: UserButtonProps) {
         <Link href="/peekaboo">
           <DropdownMenuItem>
             <Search className="mr-2 size-4" /> {/* Now the Search icon should be recognized */}
-            Peek a Boo
+            PeekaBoo
           </DropdownMenuItem>
         </Link>
 

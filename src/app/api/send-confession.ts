@@ -1,5 +1,11 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
+import type { NextApiRequest, NextApiResponse } from 'next';
+
+// Replace with your client ID, client secret, and refresh token
+const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
+const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET;
+const REFRESH_TOKEN = process.env.GOOGLE_REFRESH_TOKEN;
 
 const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method !== 'POST') {
@@ -8,12 +14,22 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const { name, message } = req.body;
 
+  // Create an OAuth2 client
+  const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET);
+  oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
+
+  const accessToken = await oauth2Client.getAccessToken();
+
   // Create a transporter with logging and debugging enabled
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
+      type: 'OAuth2',
       user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      clientId: CLIENT_ID,
+      clientSecret: CLIENT_SECRET,
+      refreshToken: REFRESH_TOKEN,
+      accessToken: accessToken.token,
     },
     logger: true,  // Enable logging
     debug: true,   // Enable debugging output
@@ -33,7 +49,7 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(200).json({ message: 'Confession sent!' });
   } catch (error) {
     console.error('Error sending email:', error);  // Log the error details
-    return res.status(500).json({ message: 'Failed to send confession', error });
+    return res.status(500).json({ message: 'Failed to send confession', error: (error as Error).message });
   }
 };
 

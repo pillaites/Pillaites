@@ -1,18 +1,21 @@
 import NextAuth from "next-auth";
-import Providers from "next-auth/providers";
+import GoogleProvider from "next-auth/providers/google"; // example for Google provider
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 
 export default NextAuth({
   providers: [
-    // Add your providers here
+    GoogleProvider({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+    }),
+    // Add other providers here
   ],
   adapter: PrismaAdapter(prisma),
   callbacks: {
     async session({ session, user }) {
-      // Add the user id to the session object
       if (session?.user) {
-        session.user.id = user.id;
+        session.user.id = user.id; // Add user ID to session
       }
       return session;
     },

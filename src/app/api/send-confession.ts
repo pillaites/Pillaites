@@ -6,30 +6,44 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
     return res.status(405).json({ message: 'Method Not Allowed' });
   }
 
-  const { name, message } = req.body;
+  const { name, email, confession } = req.body;
 
-  // Create a transporter
+  // Validate confession field
+  if (!confession) {
+    return res.status(400).json({ message: 'Confession is required' });
+  }
+
+  // Create a transporter using Gmail
   const transporter = nodemailer.createTransport({
-    service: 'Gmail',
+    service: 'gmail',
     auth: {
-      user: process.env.EMAIL_USER,
-      pass: process.env.EMAIL_PASS,
+      user: process.env.EMAIL_USER, // Unify the environment variable
+      pass: process.env.EMAIL_PASS, // Use the unified password variable
     },
   });
 
   // Define email options
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: 'recipient@example.com',
-    subject: 'New Confession',
-    text: `Name: ${name}\nMessage: ${message}`,
+    to: process.env.RECEIVING_EMAIL || 'recipient@example.com', // Use the env variable or fallback
+    subject: 'New Confession Received',
+    text: `
+      New confession received:
+
+      Name: ${name || 'Anonymous'}
+      Email: ${email || 'Not provided'}
+
+      Confession:
+      ${confession}
+    `,
   };
 
-  // Send email
+  // Send the email
   try {
     await transporter.sendMail(mailOptions);
-    return res.status(200).json({ message: 'Confession sent!' });
+    return res.status(200).json({ message: 'Confession sent successfully' });
   } catch (error) {
+    console.error('Error sending confession:', error);
     return res.status(500).json({ message: 'Failed to send confession', error });
   }
 };

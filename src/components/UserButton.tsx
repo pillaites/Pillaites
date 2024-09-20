@@ -4,7 +4,7 @@ import { logout } from "@/app/(auth)/actions";
 import { useSession } from "@/app/(main)/SessionProvider";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon, Calendar, Vote, Info, Beer, Search } from "lucide-react"; // Import Search icon
+import { Check, LogOutIcon, Monitor, Moon, Sun, UserIcon, Calendar, Vote, Info, Beer, Search } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
 import {
@@ -75,8 +75,8 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
-        {/* Add the Peek a Boo Menu Item */}
-        <Link href="https://supreme-pillaite.github.io/PeeKaboo/" passHref>
+        {/* Ensure Peekaboo opens in the same tab */}
+        <Link href="https://supreme-pillaite.github.io/PeeKaboo/">
           <DropdownMenuItem>
             <Search className="mr-2 size-4" />
             PeekaBoo

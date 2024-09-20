@@ -1,6 +1,6 @@
 // pages/api/vote.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma";
+import prisma from "@/lib/prisma";  // Correct: default import
 import { getSession } from "next-auth/react";
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

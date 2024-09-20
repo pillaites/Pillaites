@@ -18,35 +18,36 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
   const oauth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET);
   oauth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-  const accessToken = await oauth2Client.getAccessToken();
-
-  // Create a transporter with logging and debugging enabled
-  const transporter = nodemailer.createTransport({
-    service: 'Gmail',
-    auth: {
-      type: 'OAuth2',
-      user: process.env.EMAIL_USER,
-      clientId: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      refreshToken: REFRESH_TOKEN,
-      accessToken: accessToken.token,
-    },
-    logger: true,  // Enable logging
-    debug: true,   // Enable debugging output
-  });
-
-  // Define email options
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: 'recipient@example.com', // Replace with actual recipient
-    subject: 'New Confession',
-    text: `Name: ${name}\nMessage: ${message}`,
-  };
-
-  // Send email
   try {
+    const { token: accessToken } = await oauth2Client.getAccessToken();
+
+    // Create a transporter with logging and debugging enabled
+    const transporter = nodemailer.createTransport({
+      service: 'Gmail',
+      auth: {
+        type: 'OAuth2',
+        user: process.env.EMAIL_USER,
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
+        accessToken,
+      },
+      logger: true,  // Enable logging
+      debug: true,   // Enable debugging output
+    });
+
+    // Define email options
+    const mailOptions = {
+      from: process.env.EMAIL_USER,
+      to: 'recipient@example.com', // Replace with actual recipient
+      subject: 'New Confession',
+      text: `Name: ${name}\nMessage: ${message}`,
+    };
+
+    // Send email
     await transporter.sendMail(mailOptions);
     return res.status(200).json({ message: 'Confession sent!' });
+
   } catch (error) {
     console.error('Error sending email:', error);  // Log the error details
     return res.status(500).json({ message: 'Failed to send confession', error: (error as Error).message });

@@ -1,4 +1,5 @@
-"use client";
+"use client"; // Mark the component as a client component
+
 import React, { useState } from 'react';
 
 interface Image {
@@ -23,10 +24,13 @@ const Page: React.FC = () => {
     };
 
     const searchImagesWithGoogle = async (query: string): Promise<Image[]> => {
-        const response = await fetch(`https://api.example.com/images?q=${encodeURIComponent(query)}`);
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_API_KEY; // Use your environment variable here
+        const response = await fetch(`https://api.example.com/images?q=${encodeURIComponent(query)}&key=${apiKey}`);
+
         if (!response.ok) {
             throw new Error('Network response was not ok');
         }
+
         const data = await response.json();
         return data.images.map((img: { url: string }) => ({ url: img.url }));
     };

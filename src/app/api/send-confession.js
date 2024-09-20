@@ -1,10 +1,7 @@
 // /api/send-confession.js
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import sendgrid from '@sendgrid/mail';
-
-// Set your SendGrid API key
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY);
+import nodemailer from 'nodemailer';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === 'POST') {
@@ -14,10 +11,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Name and message are required.' });
     }
 
+    // Create a transporter object using SMTP transport.
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com', // Using Gmail SMTP here as an example
+      port: 587,
+      secure: false, // true for 465, false for other ports
+      auth: {
+        user: process.env.SMTP_USER, // Gmail or other SMTP provider email
+        pass: process.env.SMTP_PASSWORD, // Your email account password or app-specific password
+      },
+    });
+
     try {
-      await sendgrid.send({
-        to: 'recipient@example.com', // Change this to the recipient email address
-        from: 'your-email@example.com', // Change this to the verified sender email
+      // Send email using the transporter object
+      await transporter.sendMail({
+        from: process.env.SMTP_USER, // Sender email address
+        to: 'recipient@example.com', // The recipient email address
         subject: 'New Confession',
         text: `Confession from ${name}: ${message}`,
         html: `<strong>Confession from ${name}:</strong><p>${message}</p>`,

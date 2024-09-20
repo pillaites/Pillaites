@@ -28,7 +28,7 @@ export default function Page() {
             </Link>
             <Link
               href="/ex-pillaites"
-              className="block text-center bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300"
+              className="block text-center text-3xl font-bold text-primary hover:underline"
             >
               Are you an Ex-Pillait? Click here
             </Link>

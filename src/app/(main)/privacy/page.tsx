@@ -2,7 +2,7 @@ import React from 'react';
 
 const PrivacyPolicy: React.FC = () => {
   return (
-    <div style={styles.container}>
+    <div style={styles.container}> 
       <h1 style={styles.header}>Privacy Policy</h1>
       <p style={styles.effectiveDate}><strong>Effective Date:</strong> [Insert Date]</p>
 

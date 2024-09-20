@@ -1,6 +1,6 @@
 // pages/api/election/current.ts
 import type { NextApiRequest, NextApiResponse } from "next";
-import { prisma } from "@/lib/prisma"; // assuming you have a prisma instance exported in lib
+import prisma from "@/lib/prisma";  // Correct - default import
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {

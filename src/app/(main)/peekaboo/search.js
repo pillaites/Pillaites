@@ -1,57 +1,23 @@
-document.addEventListener("DOMContentLoaded", function() {
-    const form = document.getElementById("search-form");
-    const input = document.getElementById("search-input");
-    const resultsContainer = document.getElementById("results");
-    const errorContainer = document.getElementById("error");
+const CONFIG = {
+    GOOGLE_API_KEY: 'AIzaSyAv0eINGFdlMmMdCB-JsgyJ7C1uDHYMNhQ',
+    GOOGLE_SEARCH_ENGINE_ID: 'c1415a5bba2664a8c' // Replace with your search engine ID
+};
 
-    form.addEventListener("submit", function(event) {
-        event.preventDefault();
-        const query = input.value.trim();
+const Search = async (query) => {
+    const numImages = 10; // Set the number of images to retrieve
+    const url = `https://www.googleapis.com/customsearch/v1?key=${CONFIG.GOOGLE_API_KEY}&cx=${CONFIG.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numImages}&searchType=image`;
+    
+    try {
+        const response = await fetch(url);
+        const data = await response.json();
         
-        if (query) {
-            errorContainer.textContent = '';  // Clear previous error message
-            searchImages(query);
-        } else {
-            errorContainer.textContent = 'Please enter a search term.';
-        }
-    });
-
-    async function searchImages(query) {
-        try {
-            const apiKey = 'YOUR_API_KEY';  // Replace with your actual API key
-            const apiUrl = `https://api.example.com/images?q=${encodeURIComponent(query)}&key=${apiKey}`;
-            
-            const response = await fetch(apiUrl);
-            
-            if (!response.ok) {
-                throw new Error('Failed to fetch images.');
-            }
-
-            const data = await response.json();
-            displayResults(data.images);
-        } catch (error) {
-            showError('Error fetching images: ' + error.message);
-        }
+        // Extract image URLs from the response
+        const imageUrls = data.items.map(item => item.link);
+        return imageUrls;
+    } catch (error) {
+        console.error('Error fetching images:', error);
+        return [];
     }
+};
 
-    function displayResults(images) {
-        resultsContainer.innerHTML = '';  // Clear previous results
-        
-        if (images && images.length > 0) {
-            images.forEach(image => {
-                const imgElement = document.createElement('img');
-                imgElement.src = image.url;
-                imgElement.alt = 'Image result';
-                imgElement.style.width = '200px';
-                imgElement.style.margin = '10px';
-                resultsContainer.appendChild(imgElement);
-            });
-        } else {
-            showError('No images found.');
-        }
-    }
-
-    function showError(message) {
-        errorContainer.textContent = message;
-    }
-});
+export default Search;

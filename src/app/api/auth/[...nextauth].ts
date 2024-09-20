@@ -3,8 +3,13 @@ import GoogleProvider from "next-auth/providers/google";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import prisma from "@/lib/prisma";
 
-// Extend the default session type to include user id
+// Extend the DefaultSession type to include id
 interface User extends DefaultSession["user"] {
+  id: string;
+}
+
+// Extend the JWT token type if you're using JWT
+interface Token {
   id: string;
 }
 
@@ -18,10 +23,9 @@ export const authOptions: AuthOptions = {
   ],
   adapter: PrismaAdapter(prisma),
   callbacks: {
-    async session({ session, user }) {
-      // Type assertion to include id
+    async session({ session, token }) {
       if (session?.user) {
-        session.user.id = user.id; // Add user ID to session
+        session.user.id = (token as Token).id; // Add user ID to session
       }
       return session;
     },

@@ -3,7 +3,7 @@ import React from 'react';
 const AboutPage: React.FC = () => {
   return (
     <div style={{ padding: '20px', maxWidth: '800px', margin: '0 auto', fontFamily: 'Arial, sans-serif' }}>
-      <h1>About Pillaites</h1>
+      <h1>About Pillaites</h1> 
       <p>
         <strong>Welcome to Pillaites</strong> – a vibrant and inclusive social platform created exclusively for the students and alumni of Pillai College. Our mission is to empower students and graduates by offering a dedicated space to connect, collaborate, and thrive together.
       </p>

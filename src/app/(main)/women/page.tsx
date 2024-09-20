@@ -49,8 +49,8 @@ const ConfessionForm = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground transition-colors duration-300">
-      <div className="w-full max-w-md sm:max-w-lg md:max-w-2xl lg:max-w-3xl xl:max-w-4xl p-4 md:p-8 rounded-xl shadow-lg bg-card mx-4">
-        <h1 className="text-3xl md:text-4xl font-semibold text-center mb-6 md:mb-8">Confession Form</h1>
+      <div className="w-full max-w-4xl p-8 rounded-xl shadow-lg bg-card">
+        <h1 className="text-4xl font-semibold text-center mb-8">Confession Form</h1>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         {success && <p className="text-green-500 text-center mb-4">Confession sent successfully!</p>}
@@ -79,7 +79,7 @@ const ConfessionForm = () => {
               value={formData.message}
               onChange={handleInputChange}
               required
-              rows={6}
+              rows={8}
               className="w-full p-4 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary resize-none"
             />
           </div>
@@ -89,7 +89,7 @@ const ConfessionForm = () => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full md:w-auto py-3 px-6 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-accent transition-colors duration-300"
+              className="w-full py-3 px-6 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-accent transition-colors duration-300"
             >
               {loading ? 'Sending...' : 'Submit'}
             </button>

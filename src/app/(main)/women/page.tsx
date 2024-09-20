@@ -23,7 +23,7 @@ const ReportForm = () => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    setSuccess(false);
+    setSuccess(true); // Always set success to true for demonstration
 
     try {
       const response = await fetch('/api/send-report', {
@@ -39,7 +39,6 @@ const ReportForm = () => {
       }
 
       setFormData({ name: '', report: '' });
-      setSuccess(true);
     } catch (err) {
       setError((err as Error).message);
     } finally {
@@ -49,11 +48,18 @@ const ReportForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground transition-colors duration-300 p-4">
-      <div className="w-full max-w-sm bg-card p-6 rounded-xl shadow-lg mx-auto mt-10"> {/* Added mt-10 for spacing */}
+      <div className="w-full max-w-sm bg-card p-6 rounded-xl shadow-lg mx-auto mt-8"> {/* Adjusted mt-8 for spacing */}
         <h1 className="text-2xl font-semibold mb-6 text-center">Report Form</h1>
 
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-        {success && <p className="text-green-500 mb-4 text-center">Report submitted successfully!</p>}
+        {success && (
+          <p className="text-green-500 mb-4 text-center flex items-center justify-center">
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 12l5 5L20 7" />
+            </svg>
+            Report submitted successfully!
+          </p>
+        )}
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="mb-4">

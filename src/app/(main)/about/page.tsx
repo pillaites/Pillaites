@@ -30,7 +30,7 @@ const AboutPage: React.FC = () => {
       </ul>
       <p>
         Join Pillaites today and become part of a thriving community that’s all about connection, collaboration, and creating lifelong bonds. Let’s build a network that grows with us!
-      </p> 
+      </p>
     </div>
   );
 };

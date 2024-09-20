@@ -7,6 +7,9 @@ const ConfessionForm = () => {
     name: '',
     message: ''
   });
+  const [loading, setLoading] = useState(false); // To show loading state
+  const [error, setError] = useState<string | null>(null); // Error handling
+  const [success, setSuccess] = useState(false); // Success state
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -16,14 +19,41 @@ const ConfessionForm = () => {
     });
   };
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log('Form submitted:', formData);
+    setLoading(true);
+    setError(null);
+    setSuccess(false);
+
+    try {
+      const response = await fetch('/api/send-confession', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to send confession');
+      }
+
+      setFormData({ name: '', message: '' }); // Reset form on success
+      setSuccess(true);
+    } catch (err) {
+      setError((err as Error).message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
     <div>
       <h1>Confession Form</h1>
+
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {success && <p style={{ color: 'green' }}>Confession sent successfully!</p>}
+
       <form onSubmit={handleSubmit}>
         <div>
           <label htmlFor="name">Name:</label>
@@ -33,6 +63,7 @@ const ConfessionForm = () => {
             name="name"
             value={formData.name}
             onChange={handleInputChange}
+            required
           />
         </div>
         <div>
@@ -43,9 +74,12 @@ const ConfessionForm = () => {
             name="message"
             value={formData.message}
             onChange={handleInputChange}
+            required
           />
         </div>
-        <button type="submit">Submit</button>
+        <button type="submit" disabled={loading}>
+          {loading ? 'Sending...' : 'Submit'}
+        </button>
       </form>
     </div>
   );

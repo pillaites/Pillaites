@@ -2,7 +2,7 @@ import { validateRequest } from "@/auth";
 import { Button } from "@/components/ui/button";
 import prisma from "@/lib/prisma";
 import streamServerClient from "@/lib/stream";
-import { Bookmark, Home, Newspaper } from "lucide-react";
+import { Bookmark, Home, Newspaper } from "lucide-react"; // Remove Search if not needed
 import Link from "next/link";
 import MessagesButton from "./MessagesButton";
 import NotificationsButton from "./NotificationsButton";
@@ -63,6 +63,18 @@ export default async function MenuBar({ className }: MenuBarProps) {
         <Link href="/bookmarks">
           <Bookmark />
           <span className="hidden lg:inline">Bookmarks</span>
+        </Link>
+      </Button>
+      {/* Add the Peek a Boo Button with Logo */}
+      <Button
+        variant="ghost"
+        className="flex items-center justify-start gap-3"
+        title="Peek a Boo"
+        asChild
+      >
+        <Link href="/peek-a-boo">
+          <img src="/images/peek-a-boo-logo.png" alt="Peek a Boo Logo" className="h-6 w-auto" /> {/* Adjust the path and size */}
+          <span className="hidden lg:inline">Peek a Boo</span>
         </Link>
       </Button>
     </div>

@@ -42,7 +42,7 @@ const ReportForm = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-start bg-background text-foreground transition-colors duration-300 p-4">
-      <div className="w-full max-w-md bg-card p-6 rounded-xl shadow-lg mt-8"> {/* Adjusted to mt-8 for spacing */}
+      <div className="w-full max-w-lg bg-card p-6 rounded-xl shadow-lg mt-8"> {/* Increased max-w-lg for wider container */}
         <h1 className="text-2xl font-semibold mb-6 text-center">Report Form</h1>
 
         {success && (

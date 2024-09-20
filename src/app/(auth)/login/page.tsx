@@ -26,7 +26,10 @@ export default function Page() {
             <Link href="/signup" className="block text-center hover:underline">
               Don&apos;t have an account? Sign up
             </Link>
-            <Link href="/ex-pillaites" className="block text-center text-blue-500 hover:underline">
+            <Link
+              href="/ex-pillaites"
+              className="block text-center bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors duration-300"
+            >
               Are you an Ex-Pillait? Click here
             </Link>
           </div>
@@ -40,3 +43,4 @@ export default function Page() {
     </main>
   );
 }
+

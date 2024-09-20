@@ -1,5 +1,6 @@
 import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
+import type { NextApiRequest, NextApiResponse } from 'next';
 
 // Replace with your client ID, client secret, and refresh token
 const CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
@@ -19,7 +20,7 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
 
   const accessToken = await oauth2Client.getAccessToken();
 
-  // Create a transporter
+  // Create a transporter with logging and debugging enabled
   const transporter = nodemailer.createTransport({
     service: 'Gmail',
     auth: {
@@ -30,12 +31,14 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
       refreshToken: REFRESH_TOKEN,
       accessToken: accessToken.token,
     },
+    logger: true,  // Enable logging
+    debug: true,   // Enable debugging output
   });
 
   // Define email options
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: 'recipient@example.com',
+    to: 'recipient@example.com', // Replace with actual recipient
     subject: 'New Confession',
     text: `Name: ${name}\nMessage: ${message}`,
   };
@@ -45,7 +48,7 @@ const sendConfession = async (req: NextApiRequest, res: NextApiResponse) => {
     await transporter.sendMail(mailOptions);
     return res.status(200).json({ message: 'Confession sent!' });
   } catch (error) {
-    console.error('Email send failed:', error);
+    console.error('Error sending email:', error);  // Log the error details
     return res.status(500).json({ message: 'Failed to send confession', error: (error as Error).message });
   }
 };

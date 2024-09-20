@@ -26,6 +26,12 @@ export default function Page() {
             <Link href="/signup" className="block text-center hover:underline">
               Don&apos;t have an account? Sign up
             </Link>
+            <Link
+              href="/ex-pillaites"
+              className="block text-center text-sm font-bold text-primary hover:underline"
+            >
+              Are you an Ex-Pillaites? Click here
+            </Link>
           </div>
         </div>
         <Image
@@ -37,3 +43,4 @@ export default function Page() {
     </main>
   );
 }
+

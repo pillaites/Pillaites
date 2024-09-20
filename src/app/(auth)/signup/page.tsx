@@ -25,6 +25,12 @@ export default function Page() {
             <Link href="/login" className="block text-center hover:underline">
               Already have an account? Log in
             </Link>
+            <Link
+              href="/ex-pillaites"
+              className="block text-center text-sm font-bold text-primary hover:underline"
+            >
+              Are you an Ex-Pillaites? Click here
+            </Link>
           </div>
         </div>
         <Image

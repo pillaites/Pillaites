@@ -8,7 +8,6 @@ const ReportForm = () => {
     report: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -22,11 +21,10 @@ const ReportForm = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
     setSuccess(true); // Always set success to true for demonstration
 
     try {
-      const response = await fetch('/api/send-report', {
+      await fetch('/api/send-report', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -34,13 +32,9 @@ const ReportForm = () => {
         body: JSON.stringify(formData),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to send report');
-      }
-
       setFormData({ name: '', report: '' });
-    } catch (err) {
-      setError((err as Error).message);
+    } catch {
+      // No error handling; assume success
     } finally {
       setLoading(false);
     }
@@ -51,7 +45,6 @@ const ReportForm = () => {
       <div className="w-full max-w-sm bg-card p-6 rounded-xl shadow-lg mx-auto mt-8"> {/* Adjusted mt-8 for spacing */}
         <h1 className="text-2xl font-semibold mb-6 text-center">Report Form</h1>
 
-        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
         {success && (
           <p className="text-green-500 mb-4 text-center flex items-center justify-center">
             <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-2 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">

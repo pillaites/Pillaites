@@ -1,7 +1,7 @@
 "use client"; // This directive marks the file as a client component
 
 import React, { useState } from 'react';
-import '/src/global.css'; // Adjusted path to your global CSS
+import '/src/app/global.css'; // Adjusted path to your global CSS
 
 const ConfessionForm = () => {
   const [formData, setFormData] = useState({

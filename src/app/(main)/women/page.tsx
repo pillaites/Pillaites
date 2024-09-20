@@ -48,45 +48,49 @@ const ReportForm = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-background text-foreground transition-colors duration-300 p-4">
-      <h1 className="text-4xl font-semibold mb-8 text-center">Report Form</h1>
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground transition-colors duration-300 p-4">
+      <div className="w-full sm:max-w-md md:max-w-lg lg:max-w-xl bg-card p-6 rounded-xl shadow-lg">
+        <h1 className="text-3xl font-semibold mb-8 text-center">Report Form</h1>
 
-      {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
-      {success && <p className="text-green-500 mb-4 text-center">Report submitted successfully!</p>}
+        {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
+        {success && <p className="text-green-500 mb-4 text-center">Report submitted successfully!</p>}
 
-      <form onSubmit={handleSubmit} className="w-full max-w-6xl bg-card p-6 rounded-xl shadow-lg">
-        <div className="mb-6">
-          <label htmlFor="name" className="block mb-2 text-lg font-medium">Your Name:</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-            required
-            className="w-full p-4 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-        <div className="mb-6">
-          <label htmlFor="report" className="block mb-2 text-lg font-medium">Report Details:</label>
-          <textarea
-            id="report"
-            name="report"
-            value={formData.report}
-            onChange={handleInputChange}
-            required
-            rows={10}
-            className="w-full p-4 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
-          ></textarea>
-        </div>
-        <button
-          type="submit"
-          disabled={loading}
-          className="w-full py-4 px-6 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-accent transition-colors duration-300"
-        >
-          {loading ? 'Submitting...' : 'Submit'}
-        </button>
-      </form>
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <div className="mb-4">
+            <label htmlFor="name" className="block mb-2 text-lg font-medium">Your Name:</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              value={formData.name}
+              onChange={handleInputChange}
+              required
+              className="w-full p-3 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            />
+          </div>
+
+          <div className="mb-4">
+            <label htmlFor="report" className="block mb-2 text-lg font-medium">Report Details:</label>
+            <textarea
+              id="report"
+              name="report"
+              value={formData.report}
+              onChange={handleInputChange}
+              required
+              rows={6}
+              className="w-full p-3 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full py-3 px-6 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-accent transition-colors duration-300"
+          >
+            {loading ? 'Submitting...' : 'Submit'}
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

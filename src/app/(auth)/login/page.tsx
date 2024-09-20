@@ -1,3 +1,4 @@
+
 import loginImage from "@/assets/login-image.jpg";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -28,9 +29,9 @@ export default function Page() {
             </Link>
             <Link
               href="/ex-pillaites"
-              className="block text-center text-xl font-bold text-primary hover:underline"
+              className="block text-center text-lg font-bold text-primary hover:underline"
             >
-              Are you an Ex-Pillait? Click here
+              Are you an Ex-Pillaites? Click here
             </Link>
           </div>
         </div>
@@ -43,4 +44,3 @@ export default function Page() {
     </main>
   );
 }
-

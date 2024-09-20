@@ -46,6 +46,6 @@ This project is licensed under the "We Don't Give a Flying F***" license. Use it
 - Caffeine, for being the real MVP
 - Stack Overflow, for copying 90% of our code
 - Our families, for pretending to understand what we do
-- The voices in our heads, for the constant encouragement
+- The voices in our heads, for the constant encouragement 
 
 Remember, every time you use Pillaites, a social media influencer loses their blue tick. You're welcome, world. 🌍🔥

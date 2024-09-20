@@ -48,8 +48,8 @@ const ReportForm = () => {
   };
 
   return (
-    <div className="absolute top-8 left-8 bg-background text-foreground transition-colors duration-300 p-4">
-      <div className="w-full max-w-sm bg-card p-6 rounded-xl shadow-lg">
+    <div className="min-h-screen flex items-center justify-center bg-background text-foreground transition-colors duration-300 p-4">
+      <div className="w-full max-w-sm bg-card p-6 rounded-xl shadow-lg mx-auto mt-10"> {/* Added mt-10 for spacing */}
         <h1 className="text-2xl font-semibold mb-6 text-center">Report Form</h1>
 
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}

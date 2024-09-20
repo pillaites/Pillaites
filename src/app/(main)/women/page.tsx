@@ -49,13 +49,13 @@ const ReportForm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background text-foreground transition-colors duration-300 p-4">
-      <div className="w-full sm:max-w-md md:max-w-lg lg:max-w-xl bg-card p-6 rounded-xl shadow-lg">
-        <h1 className="text-3xl font-semibold mb-8 text-center">Report Form</h1>
+      <div className="w-full max-w-sm bg-card p-6 rounded-xl shadow-lg mx-auto">
+        <h1 className="text-2xl font-semibold mb-6 text-center">Report Form</h1>
 
         {error && <p className="text-red-500 mb-4 text-center">{error}</p>}
         {success && <p className="text-green-500 mb-4 text-center">Report submitted successfully!</p>}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="mb-4">
             <label htmlFor="name" className="block mb-2 text-lg font-medium">Your Name:</label>
             <input
@@ -65,7 +65,7 @@ const ReportForm = () => {
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full p-3 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              className="w-full p-2 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -77,15 +77,15 @@ const ReportForm = () => {
               value={formData.report}
               onChange={handleInputChange}
               required
-              rows={6}
-              className="w-full p-3 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
+              rows={4}
+              className="w-full p-2 border border-border rounded-lg bg-input text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
             ></textarea>
           </div>
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full py-3 px-6 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-accent transition-colors duration-300"
+            className="w-full py-2 bg-primary text-primary-foreground font-bold rounded-lg hover:bg-accent transition-colors duration-300"
           >
             {loading ? 'Submitting...' : 'Submit'}
           </button>

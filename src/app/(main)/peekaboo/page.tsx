@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Loader, Image as ImageIcon } from 'lucide-react';
+import { Search, Loader } from 'lucide-react';
 
 interface SearchResult {
   url: string;
@@ -39,7 +39,6 @@ const PeeKaboo: React.FC = () => {
   ];
 
   useEffect(() => {
-    // Load font
     const link = document.createElement('link');
     link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
     link.rel = 'stylesheet';
@@ -50,115 +49,82 @@ const PeeKaboo: React.FC = () => {
     };
   }, []);
 
-  const typeWriterEffect = (content: string, element: HTMLElement, speed: number = 5) => {
+  const typeWriterEffect = (content: string, element: HTMLElement) => {
     const sentences = content.split('\n\n');
     element.innerHTML = '';
-
     let i = 0;
     let j = 0;
-    let currentSentence = '';
-    let isTyping = false;
 
-    function type() {
+    const type = () => {
       if (i < sentences.length) {
-        if (!isTyping) {
-          currentSentence = sentences[i];
-          isTyping = true;
-          const p = document.createElement('p');
-          element.appendChild(p);
-        }
+        const currentSentence = sentences[i];
+        const p = document.createElement('p');
+        element.appendChild(p);
 
-        const p = element.lastElementChild as HTMLParagraphElement;
-        const char = currentSentence.charAt(j);
-        p.innerHTML += char;
-        j++;
+        const typeCharacter = () => {
+          if (j < currentSentence.length) {
+            p.innerHTML += currentSentence.charAt(j);
+            j++;
+            requestAnimationFrame(typeCharacter);
+          } else {
+            i++;
+            j = 0;
+            setTimeout(type, 200); // Pause before typing the next sentence
+          }
+        };
 
-        if (j >= currentSentence.length) {
-          j = 0;
-          i++;
-          isTyping = false;
-          setTimeout(type, speed * 2);
-        } else {
-          requestAnimationFrame(type);
-        }
+        typeCharacter();
       }
-    }
+    };
 
     type();
   };
 
   const searchWithGoogle = async (query: string, numSources: number = 15): Promise<SearchResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numSources}`;
-
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.items) {
-      return data.items.map((item: any) => ({
-        url: item.link,
-        snippet: item.snippet || '',
-      }));
-    }
-    return [];
+    return data.items ? data.items.map((item: any) => ({
+      url: item.link,
+      snippet: item.snippet || '',
+    })) : [];
   };
 
   const searchImagesWithGoogle = async (query: string, numImages: number = 4): Promise<ImageResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numImages}&searchType=image`;
-
     const response = await fetch(url);
     const data = await response.json();
 
-    if (data.items) {
-      return data.items.map((item: any) => ({
-        url: item.link,
-      }));
-    }
-    return [];
-  };
-
-  const getSnippetsForPrompt = (snippets: SearchResult[]): string => {
-    return snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
+    return data.items ? data.items.map((item: any) => ({ url: item.link })) : [];
   };
 
   const setupGetAnswerPrompt = (snippets: SearchResult[], images: ImageResult[]): string => {
-    const startingContext = `Answer all this
+    return `Answer all this
 
-1. A detailed, paragraphed, comprehensive answer to the question. It must be accurate, high-quality, and expertly written in a positive, interesting, and engaging manner. The answer should be informative and in the same language as the user question. Aim for at least 300 words in your response.
+1. A detailed, paragraphed, comprehensive answer to the question.
+2. Image Descriptions: Describe each image's relevance to the topic.
 
-2. After your main answer, provide a section titled "Image Descriptions" where you describe how each of the provided images relates to the topic. Use the format: "Image X: [Brief description and relevance to the topic]"
-
-For all parts of your response, you will be provided with a set of citations to the question. Each will start with a reference number like [citation:x], where x is a number. Always use the related citations and cite the citation at the end of each sentence in the format [citation:x]. If a sentence comes from multiple citations, please list all applicable citations, like [citation:2][citation:3].
-
-Here are the provided citations:`;
-
-    const imageContext = "\nHere are descriptions of relevant images:\n" + 
-      images.map((_, index) => `Image ${index + 1}: [Brief description and relevance to the topic]`).join('\n');
-
-    const finalContext = "Use the provided information to create a comprehensive and engaging response.";
-
-    return `${startingContext}\n\n${getSnippetsForPrompt(snippets)}\n\n${imageContext}\n\n${finalContext}`;
+Here are the provided citations: ${snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n')}
+`;
   };
 
-  const requestGroq = async (query: string, context: string, maxTokens: number = 3000, model: string = "mixtral-8x7b-32768", temperature: number = 0.7): Promise<GroqResponse> => {
-    const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-
-    const requestBody = {
-      model: model,
-      messages: [
-        { role: "system", content: context },
-        { role: "user", content: query }
-      ],
-      temperature: temperature,
-      max_tokens: maxTokens,
-    };
-
-    const response = await fetch(GROQ_ENDPOINT, {
+  const requestGroq = async (query: string, context: string): Promise<GroqResponse> => {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: "mixtral-8x7b-32768",
+        messages: [
+          { role: "system", content: context },
+          { role: "user", content: query }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000,
+      }),
     });
 
     return response.json();
@@ -174,30 +140,24 @@ Here are the provided citations:`;
     try {
       const [snippets, images] = await Promise.all([searchWithGoogle(query), searchImagesWithGoogle(query)]);
       setResults(images);
-
       const answerPromptContext = setupGetAnswerPrompt(snippets, images);
       const data = await requestGroq(query, answerPromptContext);
 
-      let content = '';
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        content = data.choices[0].message.content;
+      if (data.choices?.[0]?.message?.content) {
+        setSummary(data.choices[0].message.content);
+        const summaryElement = document.getElementById('summary');
+        if (summaryElement) {
+          typeWriterEffect(data.choices[0].message.content, summaryElement);
+        }
       } else if (data.error) {
-        content = `Error: ${data.error.message}`;
+        setSummary(`Error: ${data.error.message}`);
       } else {
-        content = 'No summary available.';
+        setSummary('No summary available.');
       }
-
-      setSummary(content);
       setMetadata(`Query: ${query}\nModel: mixtral-8x7b-32768`);
-
-      // Use typewriter effect
-      const summaryElement = document.getElementById('summary');
-      if (summaryElement) {
-        typeWriterEffect(content, summaryElement);
-      }
     } catch (error) {
       console.error('Error:', error);
-      setSummary(`An error occurred while processing your query: ${(error as Error).message}`);
+      setSummary(`An error occurred: ${error.message}`);
     } finally {
       setIsLoading(false);
     }
@@ -237,7 +197,7 @@ Here are the provided citations:`;
           {questions.map((q, index) => (
             <motion.span
               key={index}
-              className="inline-block m-2 px-4 py-2 bg-[hsl(var(--card))] rounded-full cursor-pointer hover:bg-yellow-500 transition-colors duration-200 text-yellow-700"
+              className="inline-block m-2 px-4 py-2 bg-[hsl(var(--card))] rounded-full cursor-pointer hover:bg-yellow-500 transition-colors duration-200"
               onClick={() => setQuery(q)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}

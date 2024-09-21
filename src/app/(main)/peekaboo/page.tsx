@@ -43,7 +43,7 @@ const PeeKaboo: React.FC = () => {
     link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
-
+    
     return () => {
       document.head.removeChild(link);
     };
@@ -55,31 +55,26 @@ const PeeKaboo: React.FC = () => {
 
     let i = 0;
     let j = 0;
-    let currentSentence = '';
-    let isTyping = false;
 
     function type() {
       if (i < sentences.length) {
-        if (!isTyping) {
-          currentSentence = sentences[i];
-          isTyping = true;
-          const p = document.createElement('p');
-          element.appendChild(p);
+        const currentSentence = sentences[i];
+        const p = document.createElement('p');
+        element.appendChild(p);
+
+        function typeChar() {
+          if (j < currentSentence.length) {
+            p.innerHTML += currentSentence.charAt(j);
+            j++;
+            requestAnimationFrame(typeChar);
+          } else {
+            j = 0;
+            i++;
+            setTimeout(type, speed * 2);
+          }
         }
 
-        const p = element.lastElementChild as HTMLParagraphElement;
-        const char = currentSentence.charAt(j);
-        p.innerHTML += char;
-        j++;
-
-        if (j >= currentSentence.length) {
-          j = 0;
-          i++;
-          isTyping = false;
-          setTimeout(type, speed * 2);
-        } else {
-          requestAnimationFrame(type);
-        }
+        typeChar();
       }
     }
 
@@ -88,7 +83,6 @@ const PeeKaboo: React.FC = () => {
 
   const searchWithGoogle = async (query: string, numSources: number = 15): Promise<SearchResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numSources}`;
-    
     const response = await fetch(url);
     const data = await response.json();
     
@@ -103,7 +97,6 @@ const PeeKaboo: React.FC = () => {
 
   const searchImagesWithGoogle = async (query: string, numImages: number = 4): Promise<ImageResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numImages}&searchType=image`;
-    
     const response = await fetch(url);
     const data = await response.json();
     
@@ -115,40 +108,25 @@ const PeeKaboo: React.FC = () => {
     return [];
   };
 
-  const getSnippetsForPrompt = (snippets: SearchResult[]): string => {
-    return snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
-  };
-
   const setupGetAnswerPrompt = (snippets: SearchResult[], images: ImageResult[]): string => {
-    const startingContext = `Answer all this
-
-1. A detailed, paragraphed, comprehensive answer to the question. It must be accurate, high-quality, and expertly written in a positive, interesting, and engaging manner. The answer should be informative and in the same language as the user question. Aim for at least 300 words in your response.
-
-2. After your main answer, provide a section titled "Image Descriptions" where you describe how each of the provided images relates to the topic. Use the format: "Image X: [Brief description and relevance to the topic]"
-
-For all parts of your response, you will be provided with a set of citations to the question. Each will start with a reference number like [citation:x], where x is a number. Always use the related citations and cite the citation at the end of each sentence in the format [citation:x]. If a sentence comes from multiple citations, please list all applicable citations, like [citation:2][citation:3].
-
-Here are the provided citations:`;
-
-    const imageContext = "\nHere are descriptions of relevant images:\n" +
-      images.map((_, index) => `Image ${index + 1}: [Brief description and relevance to the topic]`).join('\n');
-
-    const finalContext = "Use the provided information to create a comprehensive and engaging response.";
-
-    return `${startingContext}\n\n${getSnippetsForPrompt(snippets)}\n\n${imageContext}\n\n${finalContext}`;
+    const snippetsText = snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
+    
+    return `Answer all this\n\n${snippetsText}\n\nHere are the images:\n` +
+      images.map((_, index) => `Image ${index + 1}: [Description]`).join('\n') + 
+      "\n\nUse the provided information to create a comprehensive and engaging response.";
   };
 
-  const requestGroq = async (query: string, context: string, maxTokens: number = 3000, model: string = "mixtral-8x7b-32768", temperature: number = 0.7): Promise<GroqResponse> => {
+  const requestGroq = async (query: string, context: string): Promise<GroqResponse> => {
     const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
     
     const requestBody = {
-      model: model,
+      model: "mixtral-8x7b-32768",
       messages: [
         { role: "system", content: context },
         { role: "user", content: query }
       ],
-      temperature: temperature,
-      max_tokens: maxTokens,
+      temperature: 0.7,
+      max_tokens: 3000,
     };
 
     const response = await fetch(GROQ_ENDPOINT, {
@@ -171,7 +149,11 @@ Here are the provided citations:`;
     setIsLoading(true);
 
     try {
-      const [snippets, images] = await Promise.all([searchWithGoogle(query), searchImagesWithGoogle(query)]);
+      const [snippets, images] = await Promise.all([
+        searchWithGoogle(query),
+        searchImagesWithGoogle(query),
+      ]);
+      
       setResults(images);
       const answerPromptContext = setupGetAnswerPrompt(snippets, images);
       const data = await requestGroq(query, answerPromptContext);
@@ -192,8 +174,7 @@ Here are the provided citations:`;
       setMetadata(`Query: ${query}\nModel: mixtral-8x7b-32768`);
     } catch (error) {
       console.error('Error:', error);
-      const errorMessage = (error as Error).message || 'An unknown error occurred';
-      setSummary(`An error occurred: ${errorMessage}`);
+      setSummary(`An error occurred: ${(error as Error).message || 'Unknown error'}`);
     } finally {
       setIsLoading(false);
     }
@@ -244,6 +225,18 @@ Here are the provided citations:`;
         <div id="summary" className="mt-4"></div>
         {summary && <p className="mt-4">{summary}</p>}
         {metadata && <p className="mt-4 text-gray-500">{metadata}</p>}
+        
+        {/* Render Images */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+          {results.map((image, index) => (
+            <img 
+              key={index} 
+              src={image.url} 
+              alt={`Image ${index + 1}`} 
+              className="w-full h-auto rounded-lg shadow-md"
+            />
+          ))}
+        </div>
       </div>
     </div>
   );

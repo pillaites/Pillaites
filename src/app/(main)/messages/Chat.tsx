@@ -1,26 +1,45 @@
 "use client";
 
+import { Loader2 } from "lucide-react";
+import { useTheme } from "next-themes";
 import { useState } from "react";
-import ChatSidebar from "./ChatSidebar"; // Adjust import according to your file structure
-import ChatChannel from "./ChatChannel"; // Adjust import according to your file structure
+import { Chat as StreamChat } from "stream-chat-react";
+import ChatChannel from "./ChatChannel";
+import ChatSidebar from "./ChatSidebar";
+import useInitializeChatClient from "./useInitializeChatClient";
 
 export default function Chat() {
-  const [activeView, setActiveView] = useState<"sidebar" | "chat">("sidebar");
+  const chatClient = useInitializeChatClient();
+
+  const { resolvedTheme } = useTheme();
+
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  if (!chatClient) {
+    return <Loader2 className="mx-auto my-3 animate-spin" />;
+  }
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Sidebar view */}
-      {activeView === "sidebar" && (
-        <ChatSidebar 
-          isVisible={activeView === "sidebar"} 
-          onSelectChannel={() => setActiveView("chat")} 
-        />
-      )}
-
-      {/* Chat view */}
-      {activeView === "chat" && (
-        <ChatChannel onOpenSidebar={() => setActiveView("sidebar")} />
-      )}
-    </div>
+    <main className="relative w-full overflow-hidden rounded-2xl bg-card shadow-sm">
+      <div className="absolute bottom-0 top-0 flex w-full">
+        <StreamChat
+          client={chatClient}
+          theme={
+            resolvedTheme === "dark"
+              ? "str-chat__theme-dark"
+              : "str-chat__theme-light"
+          }
+        >
+          <ChatSidebar
+            open={sidebarOpen}
+            onClose={() => setSidebarOpen(false)}
+          />
+          <ChatChannel
+            open={!sidebarOpen}
+            openSidebar={() => setSidebarOpen(true)}
+          />
+        </StreamChat>
+      </div>
+    </main>
   );
 }

@@ -76,7 +76,7 @@ export default function UserButton({ className }: UserButtonProps) {
         </Link>
 
         {/* Ensure Peekaboo opens in the same tab */}
-        <Link href="https://supreme-pillaite.github.io/PeeKaboo/">
+        <Link href="/peekaboo">
           <DropdownMenuItem>
             <Search className="mr-2 size-4" />
             PeekaBoo

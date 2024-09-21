@@ -207,7 +207,7 @@ Here are the provided citations:`;
     <div className="min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-['VT323', monospace] p-4">
       <div className="max-w-4xl mx-auto">
         <motion.h1 
-          className="text-6xl text-center my-8"
+          className="text-6xl text-center my-8 text-yellow-500"
           initial={{ opacity: 0, y: -50 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
@@ -226,18 +226,18 @@ Here are the provided citations:`;
             />
             <button 
               type="submit" 
-              className="p-4 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary-foreground))] transition-colors duration-200"
+              className="p-4 bg-yellow-500 text-black hover:bg-yellow-600 transition-colors duration-200"
               disabled={isLoading}
             >
               {isLoading ? <Loader className="animate-spin" /> : <Search />}
             </button>
           </div>
         </form>
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex flex-wrap justify-center mb-8">
           {questions.map((q, index) => (
             <motion.span
               key={index}
-              className="px-3 py-1 bg-[hsl(var(--card))] rounded-full cursor-pointer hover:bg-[hsl(var(--secondary))] transition-colors duration-200"
+              className="inline-block m-2 px-4 py-2 bg-[hsl(var(--card))] rounded-full cursor-pointer hover:bg-yellow-500 transition-colors duration-200 text-yellow-700"
               onClick={() => setQuery(q)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -276,7 +276,7 @@ Here are the provided citations:`;
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-2xl mb-4">Summary</h2>
-            <div id="summary" className="bg-[hsl(var(--card))] p-6 rounded-lg" />
+            <div id="summary" className="bg-[hsl(var(--card))] p-6 rounded-lg text-yellow-300" />
           </motion.div>
         )}
         {metadata && (

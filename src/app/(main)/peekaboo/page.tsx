@@ -14,14 +14,8 @@ interface ImageResult {
 }
 
 interface GroqResponse {
-  choices: {
-    message: {
-      content: string;
-    };
-  }[];
-  error?: {
-    message: string;
-  };
+  choices: Array<{ message: { content: string } }>;
+  error?: { message: string };
 }
 
 const PeeKaboo: React.FC = () => {
@@ -30,6 +24,7 @@ const PeeKaboo: React.FC = () => {
   const [summary, setSummary] = useState<string>('');
   const [metadata, setMetadata] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const questions = [
     "What is today's breaking news?",
@@ -53,91 +48,97 @@ const PeeKaboo: React.FC = () => {
     const sentences = content.split('\n\n');
     element.innerHTML = '';
 
-    let i = 0;
-    let j = 0;
+    let sentenceIndex = 0;
+    let charIndex = 0;
 
-    function type() {
-      if (i < sentences.length) {
-        const currentSentence = sentences[i];
-        const p = document.createElement('p');
-        element.appendChild(p);
-
-        function typeChar() {
-          if (j < currentSentence.length) {
-            p.innerHTML += currentSentence.charAt(j);
-            j++;
-            requestAnimationFrame(typeChar);
-          } else {
-            j = 0;
-            i++;
-            setTimeout(type, speed * 2);
-          }
+    const typeChar = () => {
+      if (sentenceIndex < sentences.length) {
+        const currentSentence = sentences[sentenceIndex];
+        
+        if (charIndex === 0) {
+          const p = document.createElement('p');
+          element.appendChild(p);
         }
 
-        typeChar();
-      }
-    }
+        const p = element.lastElementChild as HTMLParagraphElement;
+        p.innerHTML += currentSentence[charIndex];
+        charIndex++;
 
-    type();
+        if (charIndex >= currentSentence.length) {
+          charIndex = 0;
+          sentenceIndex++;
+          setTimeout(typeChar, speed * 2);
+        } else {
+          setTimeout(typeChar, speed);
+        }
+      }
+    };
+
+    typeChar();
   };
 
   const searchWithGoogle = async (query: string, numSources: number = 15): Promise<SearchResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numSources}`;
     const response = await fetch(url);
-    const data = await response.json();
+    if (!response.ok) throw new Error(`Google search failed: ${response.statusText}`);
     
-    if (data.items) {
-      return data.items.map((item: any) => ({
-        url: item.link,
-        snippet: item.snippet || '',
-      }));
-    }
-    return [];
+    const data = await response.json();
+    return data.items?.map((item: any) => ({
+      url: item.link,
+      snippet: item.snippet || '',
+    })) || [];
   };
 
   const searchImagesWithGoogle = async (query: string, numImages: number = 4): Promise<ImageResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numImages}&searchType=image`;
     const response = await fetch(url);
-    const data = await response.json();
+    if (!response.ok) throw new Error(`Google image search failed: ${response.statusText}`);
     
-    if (data.items) {
-      return data.items.map((item: any) => ({
-        url: item.link,
-      }));
-    }
-    return [];
+    const data = await response.json();
+    return data.items?.map((item: any) => ({ url: item.link })) || [];
   };
 
-  const setupGetAnswerPrompt = (snippets: SearchResult[], images: ImageResult[]): string => {
+  const getPromptContext = (snippets: SearchResult[], images: ImageResult[]): string => {
     const snippetsText = snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
-    
-    return `Answer all this\n\n${snippetsText}\n\nHere are the images:\n` +
-      images.map((_, index) => `Image ${index + 1}: [Description]`).join('\n') + 
-      "\n\nUse the provided information to create a comprehensive and engaging response.";
+    const imagesText = images.map((_, i) => `Image ${i + 1}: [Brief description and relevance to the topic]`).join('\n');
+
+    return `Answer the following based on the provided information:
+
+1. Provide a detailed, paragraphed, comprehensive answer to the question. It must be accurate, high-quality, and expertly written in a positive, interesting, and engaging manner. The answer should be informative and in the same language as the user question. Aim for at least 300 words in your response.
+
+2. After your main answer, provide a section titled "Image Descriptions" where you describe how each of the provided images relates to the topic. Use the format: "Image X: [Brief description and relevance to the topic]"
+
+Always use the related citations and cite them at the end of each sentence in the format [citation:x]. If a sentence comes from multiple citations, list all applicable citations, like [citation:2][citation:3].
+
+Here are the provided citations:
+
+${snippetsText}
+
+Here are descriptions of relevant images:
+${imagesText}
+
+Use the provided information to create a comprehensive and engaging response.`;
   };
 
   const requestGroq = async (query: string, context: string): Promise<GroqResponse> => {
-    const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-    
-    const requestBody = {
-      model: "mixtral-8x7b-32768",
-      messages: [
-        { role: "system", content: context },
-        { role: "user", content: query }
-      ],
-      temperature: 0.7,
-      max_tokens: 3000,
-    };
-
-    const response = await fetch(GROQ_ENDPOINT, {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: "mixtral-8x7b-32768",
+        messages: [
+          { role: "system", content: context },
+          { role: "user", content: query }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000,
+      }),
     });
 
+    if (!response.ok) throw new Error(`Groq API request failed: ${response.statusText}`);
     return response.json();
   };
 
@@ -147,6 +148,7 @@ const PeeKaboo: React.FC = () => {
     setSummary('');
     setMetadata('');
     setIsLoading(true);
+    setError(null);
 
     try {
       const [snippets, images] = await Promise.all([
@@ -155,26 +157,21 @@ const PeeKaboo: React.FC = () => {
       ]);
       
       setResults(images);
-      const answerPromptContext = setupGetAnswerPrompt(snippets, images);
-      const data = await requestGroq(query, answerPromptContext);
+      const promptContext = getPromptContext(snippets, images);
+      const data = await requestGroq(query, promptContext);
 
-      if (data.choices?.[0]?.message?.content) {
-        const content = data.choices[0].message.content;
-        setSummary(content);
-        
-        const summaryElement = document.getElementById('summary');
-        if (summaryElement) {
-          typeWriterEffect(content, summaryElement);
-        }
-      } else if (data.error) {
-        setSummary(`Error: ${data.error.message}`);
-      } else {
-        setSummary('No summary available.');
-      }
+      const content = data.choices?.[0]?.message?.content || 'No summary available.';
+      setSummary(content);
       setMetadata(`Query: ${query}\nModel: mixtral-8x7b-32768`);
+
+      const summaryElement = document.getElementById('summary');
+      if (summaryElement) {
+        typeWriterEffect(content, summaryElement);
+      }
     } catch (error) {
       console.error('Error:', error);
-      setSummary(`An error occurred: ${(error as Error).message || 'Unknown error'}`);
+      setError(`An error occurred: ${(error as Error).message}`);
+      setSummary('');
     } finally {
       setIsLoading(false);
     }

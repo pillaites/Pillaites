@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import Image from 'next/image';
+"use client";
+
+import React, { useState, useEffect, FormEvent } from 'react';
+import { motion } from 'framer-motion';
+import { Search, Loader } from 'lucide-react';
 
 interface SearchResult {
   url: string;
@@ -31,10 +34,14 @@ const PeeKaboo: React.FC = () => {
   ];
 
   useEffect(() => {
-    const loadFont = async () => {
-      await document.fonts.load('12px "VT323"');
+    const link = document.createElement('link');
+    link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
+    link.rel = 'stylesheet';
+    document.head.appendChild(link);
+    
+    return () => {
+      document.head.removeChild(link);
     };
-    loadFont();
   }, []);
 
   const typeWriterEffect = (content: string, element: HTMLElement, speed: number = 5) => {
@@ -72,7 +79,6 @@ const PeeKaboo: React.FC = () => {
 
   const searchWithGoogle = async (query: string, numSources: number = 15): Promise<SearchResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numSources}`;
-
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Google search failed: ${response.statusText}`);
     
@@ -85,7 +91,6 @@ const PeeKaboo: React.FC = () => {
 
   const searchImagesWithGoogle = async (query: string, numImages: number = 4): Promise<ImageResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numImages}&searchType=image`;
-
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Google image search failed: ${response.statusText}`);
     
@@ -137,33 +142,25 @@ Use the provided information to create a comprehensive and engaging response.`;
     return response.json();
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
+    setResults([]);
+    setSummary('');
+    setMetadata('');
     setIsLoading(true);
     setError(null);
-    setResults([]);
-    setSummary('Processing query...');
-    setMetadata('');
 
     try {
-      console.log('Fetching search results and images...');
       const [snippets, images] = await Promise.all([
         searchWithGoogle(query),
-        searchImagesWithGoogle(query)
+        searchImagesWithGoogle(query),
       ]);
-      console.log(`Found ${snippets.length} snippets and ${images.length} images`);
-
+      
       setResults(images);
-
-      console.log('Preparing prompt context...');
       const promptContext = getPromptContext(snippets, images);
-
-      console.log('Requesting summary from Groq...');
       const data = await requestGroq(query, promptContext);
 
       const content = data.choices?.[0]?.message?.content || 'No summary available.';
-      console.log('Received summary from Groq');
-
       setSummary(content);
       setMetadata(`Query: ${query}\nModel: mixtral-8x7b-32768`);
 
@@ -181,48 +178,63 @@ Use the provided information to create a comprehensive and engaging response.`;
   };
 
   return (
-    <div className="container">
-      <h1>PeeKaboo?</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter your query..."
-          required
-        />
-        <button type="submit" disabled={isLoading}>
-          {isLoading ? 'Processing...' : 'EXECUTE'}
-        </button>
-      </form>
-      <div id="suggestions">
-        {questions.map((q, index) => (
-          <span key={index} className="question" onClick={() => setQuery(q)}>
-            {q}
-          </span>
-        ))}
+    <div className="min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-['VT323', monospace] p-4">
+      <div className="max-w-4xl mx-auto">
+        <motion.h1 
+          className="text-6xl text-center my-8 text-yellow-500"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          PeeKaboo?
+        </motion.h1>
+        <form onSubmit={handleSubmit} className="mb-8">
+          <div className="flex items-center bg-[hsl(var(--card))] rounded-lg overflow-hidden">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Enter your query..."
+              className="flex-grow p-4 bg-transparent text-[hsl(var(--foreground))] placeholder-[hsl(var(--muted-foreground))] focus:outline-none"
+              required
+            />
+            <button 
+              type="submit" 
+              className="p-4 bg-yellow-500 text-black hover:bg-yellow-600 transition-colors duration-200"
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader className="animate-spin" /> : <Search />}
+            </button>
+          </div>
+        </form>
+        <div className="flex flex-wrap justify-center mb-8">
+          {questions.map((q, index) => (
+            <motion.span
+              key={index}
+              className="inline-block m-2 px-4 py-2 bg-[hsl(var(--card))] rounded-full cursor-pointer hover:bg-yellow-500 transition-colors duration-200 text-yellow-500"
+              onClick={() => setQuery(q)}
+            >
+              {q}
+            </motion.span>
+          ))}
+        </div>
+        {isLoading && <Loader className="mx-auto my-4" />}
+        <div id="summary" className="mt-4"></div>
+        {summary && <p className="mt-4">{summary}</p>}
+        {metadata && <p className="mt-4 text-gray-500">{metadata}</p>}
+        
+        {/* Render Images */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
+          {results.map((image, index) => (
+            <img 
+              key={index} 
+              src={image.url} 
+              alt={`Image ${index + 1}`} 
+              className="w-full h-auto rounded-lg shadow-md"
+            />
+          ))}
+        </div>
       </div>
-      {error && <div className="error">{error}</div>}
-      <div id="results">
-        {results.length > 0 ? (
-          results.map((image, index) => (
-            <Image key={index} src={image.url} alt={`Image ${index + 1}`} width={200} height={200} />
-          ))
-        ) : (
-          <p>No images found.</p>
-        )}
-      </div>
-      <div id="summary">
-        <h2>{query}</h2>
-        <div dangerouslySetInnerHTML={{ __html: summary }} />
-      </div>
-      <div id="metadata">
-        <h2>Metadata</h2>
-        <pre>{metadata}</pre>
-      </div>
-      <footer>
-        &copy; 2024 PeeKaboo | Powered by Illuminati
-      </footer>
     </div>
   );
 };

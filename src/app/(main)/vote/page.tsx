@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { AlertCircle, CheckCircle } from 'lucide-react';
@@ -23,9 +25,7 @@ export default function ImageVoting() {
         {[0, 1].map((index) => (
           <div
             key={index}
-            className={`relative cursor-pointer ${
-              selectedImage === index ? 'ring-4 ring-green-500' : ''
-            }`}
+            className={`relative cursor-pointer ${selectedImage === index ? 'ring-4 ring-green-500' : ''}`}
             onClick={() => handleImageClick(index)}
           >
             <img

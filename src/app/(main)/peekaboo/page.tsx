@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Search, Loader, Image as ImageIcon } from 'lucide-react';
 
@@ -259,12 +258,11 @@ Here are the provided citations:`;
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
-                  <Image 
+                  {/* Use img tag instead of Next.js Image component */}
+                  <img 
                     src={image.url} 
                     alt={`Image ${index + 1}`} 
-                    layout="fill"
-                    objectFit="cover"
-                    className="transition-transform duration-200 hover:scale-110"
+                    className="w-full h-full object-cover transition-transform duration-200 hover:scale-110"
                   />
                 </motion.div>
               ))}

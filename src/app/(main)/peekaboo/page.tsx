@@ -1,4 +1,4 @@
-import React, { useState, useEffect, FormEvent } from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 
 interface SearchResult {
@@ -11,14 +11,8 @@ interface ImageResult {
 }
 
 interface GroqResponse {
-  choices: {
-    message: {
-      content: string;
-    };
-  }[];
-  error?: {
-    message: string;
-  };
+  choices: Array<{ message: { content: string } }>;
+  error?: { message: string };
 }
 
 const PeeKaboo: React.FC = () => {
@@ -26,6 +20,8 @@ const PeeKaboo: React.FC = () => {
   const [results, setResults] = useState<ImageResult[]>([]);
   const [summary, setSummary] = useState<string>('');
   const [metadata, setMetadata] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const questions = [
     "What is today's breaking news?",
@@ -35,165 +31,152 @@ const PeeKaboo: React.FC = () => {
   ];
 
   useEffect(() => {
-    // Load font
-    const link = document.createElement('link');
-    link.href = 'https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJU.woff2';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-
-    return () => {
-      document.head.removeChild(link);
+    const loadFont = async () => {
+      await document.fonts.load('12px "VT323"');
     };
+    loadFont();
   }, []);
 
-  const typeWriterFromJSON = (jsonData: GroqResponse, element: HTMLElement, speed: number = 5) => {
-    const content = jsonData.choices[0].message.content;
+  const typeWriterEffect = (content: string, element: HTMLElement, speed: number = 5) => {
     const sentences = content.split('\n\n');
     element.innerHTML = '';
 
-    let i = 0;
-    let j = 0;
-    let currentSentence = '';
-    let isTyping = false;
+    let sentenceIndex = 0;
+    let charIndex = 0;
 
-    function type() {
-      if (i < sentences.length) {
-        if (!isTyping) {
-          currentSentence = sentences[i];
-          isTyping = true;
+    const typeChar = () => {
+      if (sentenceIndex < sentences.length) {
+        const currentSentence = sentences[sentenceIndex];
+        
+        if (charIndex === 0) {
           const p = document.createElement('p');
           element.appendChild(p);
         }
 
         const p = element.lastElementChild as HTMLParagraphElement;
-        const char = currentSentence.charAt(j);
-        p.innerHTML += char;
-        j++;
+        p.innerHTML += currentSentence[charIndex];
+        charIndex++;
 
-        if (j >= currentSentence.length) {
-          j = 0;
-          i++;
-          isTyping = false;
-          setTimeout(type, speed * 2);
+        if (charIndex >= currentSentence.length) {
+          charIndex = 0;
+          sentenceIndex++;
+          setTimeout(typeChar, speed * 2);
         } else {
-          requestAnimationFrame(type);
+          setTimeout(typeChar, speed);
         }
       }
-    }
+    };
 
-    type();
+    typeChar();
   };
 
   const searchWithGoogle = async (query: string, numSources: number = 15): Promise<SearchResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numSources}`;
 
     const response = await fetch(url);
+    if (!response.ok) throw new Error(`Google search failed: ${response.statusText}`);
+    
     const data = await response.json();
-
-    if (data.items) {
-      return data.items.map((item: any) => ({
-        url: item.link,
-        snippet: item.snippet || '',
-      }));
-    }
-    return [];
+    return data.items?.map((item: any) => ({
+      url: item.link,
+      snippet: item.snippet || '',
+    })) || [];
   };
 
   const searchImagesWithGoogle = async (query: string, numImages: number = 4): Promise<ImageResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numImages}&searchType=image`;
 
     const response = await fetch(url);
+    if (!response.ok) throw new Error(`Google image search failed: ${response.statusText}`);
+    
     const data = await response.json();
-
-    if (data.items) {
-      return data.items.map((item: any) => ({
-        url: item.link,
-      }));
-    }
-    return [];
+    return data.items?.map((item: any) => ({ url: item.link })) || [];
   };
 
-  const getSnippetsForPrompt = (snippets: SearchResult[]): string => {
-    return snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
-  };
+  const getPromptContext = (snippets: SearchResult[], images: ImageResult[]): string => {
+    const snippetsText = snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
+    const imagesText = images.map((_, i) => `Image ${i + 1}: [Brief description and relevance to the topic]`).join('\n');
 
-  const setupGetAnswerPrompt = (snippets: SearchResult[], images: ImageResult[]): string => {
-    const startingContext = `Answer all this
+    return `Answer the following based on the provided information:
 
-1. A detailed, paragraphed, comprehensive answer to the question. It must be accurate, high-quality, and expertly written in a positive, interesting, and engaging manner. The answer should be informative and in the same language as the user question. Aim for at least 300 words in your response.
+1. Provide a detailed, paragraphed, comprehensive answer to the question. It must be accurate, high-quality, and expertly written in a positive, interesting, and engaging manner. The answer should be informative and in the same language as the user question. Aim for at least 300 words in your response.
 
 2. After your main answer, provide a section titled "Image Descriptions" where you describe how each of the provided images relates to the topic. Use the format: "Image X: [Brief description and relevance to the topic]"
 
-For all parts of your response, you will be provided with a set of citations to the question. Each will start with a reference number like [citation:x], where x is a number. Always use the related citations and cite the citation at the end of each sentence in the format [citation:x]. If a sentence comes from multiple citations, please list all applicable citations, like [citation:2][citation:3].
+Always use the related citations and cite them at the end of each sentence in the format [citation:x]. If a sentence comes from multiple citations, list all applicable citations, like [citation:2][citation:3].
 
-Here are the provided citations:`;
+Here are the provided citations:
 
-    const imageContext = "\nHere are descriptions of relevant images:\n" + 
-      images.map((_, index) => `Image ${index + 1}: [Brief description and relevance to the topic]`).join('\n');
+${snippetsText}
 
-    const finalContext = "Use the provided information to create a comprehensive and engaging response.";
+Here are descriptions of relevant images:
+${imagesText}
 
-    return `${startingContext}\n\n${getSnippetsForPrompt(snippets)}\n\n${imageContext}\n\n${finalContext}`;
+Use the provided information to create a comprehensive and engaging response.`;
   };
 
-  const requestGroq = async (query: string, context: string, maxTokens: number = 3000, model: string = "mixtral-8x7b-32768", temperature: number = 0.7): Promise<GroqResponse> => {
-    const GROQ_ENDPOINT = "https://api.groq.com/openai/v1/chat/completions";
-
-    const requestBody = {
-      model: model,
-      messages: [
-        { role: "system", content: context },
-        { role: "user", content: query }
-      ],
-      temperature: temperature,
-      max_tokens: maxTokens,
-    };
-
-    const response = await fetch(GROQ_ENDPOINT, {
+  const requestGroq = async (query: string, context: string): Promise<GroqResponse> => {
+    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${process.env.NEXT_PUBLIC_GROQ_API_KEY}`,
       },
-      body: JSON.stringify(requestBody),
+      body: JSON.stringify({
+        model: "mixtral-8x7b-32768",
+        messages: [
+          { role: "system", content: context },
+          { role: "user", content: query }
+        ],
+        temperature: 0.7,
+        max_tokens: 3000,
+      }),
     });
 
+    if (!response.ok) throw new Error(`Groq API request failed: ${response.statusText}`);
     return response.json();
   };
 
-  const handleSubmit = async (e: FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    setError(null);
     setResults([]);
     setSummary('Processing query...');
     setMetadata('');
 
     try {
-      const [snippets, images] = await Promise.all([searchWithGoogle(query), searchImagesWithGoogle(query)]);
+      console.log('Fetching search results and images...');
+      const [snippets, images] = await Promise.all([
+        searchWithGoogle(query),
+        searchImagesWithGoogle(query)
+      ]);
+      console.log(`Found ${snippets.length} snippets and ${images.length} images`);
+
       setResults(images);
 
-      const answerPromptContext = setupGetAnswerPrompt(snippets, images);
-      const data = await requestGroq(query, answerPromptContext);
+      console.log('Preparing prompt context...');
+      const promptContext = getPromptContext(snippets, images);
 
-      let content = '';
-      if (data.choices && data.choices[0] && data.choices[0].message) {
-        content = data.choices[0].message.content;
-      } else if (data.error) {
-        content = `Error: ${data.error.message}`;
-      } else {
-        content = 'No summary available.';
-      }
+      console.log('Requesting summary from Groq...');
+      const data = await requestGroq(query, promptContext);
+
+      const content = data.choices?.[0]?.message?.content || 'No summary available.';
+      console.log('Received summary from Groq');
 
       setSummary(content);
       setMetadata(`Query: ${query}\nModel: mixtral-8x7b-32768`);
 
-      // Use typewriter effect
       const summaryElement = document.getElementById('summary');
       if (summaryElement) {
-        typeWriterFromJSON({ choices: [{ message: { content } }] }, summaryElement);
+        typeWriterEffect(content, summaryElement);
       }
     } catch (error) {
       console.error('Error:', error);
-      setSummary(`An error occurred while processing your query: ${(error as Error).message}`);
+      setError(`An error occurred: ${(error as Error).message}`);
+      setSummary('');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -208,7 +191,9 @@ Here are the provided citations:`;
           placeholder="Enter your query..."
           required
         />
-        <button type="submit">EXECUTE</button>
+        <button type="submit" disabled={isLoading}>
+          {isLoading ? 'Processing...' : 'EXECUTE'}
+        </button>
       </form>
       <div id="suggestions">
         {questions.map((q, index) => (
@@ -217,6 +202,7 @@ Here are the provided citations:`;
           </span>
         ))}
       </div>
+      {error && <div className="error">{error}</div>}
       <div id="results">
         {results.length > 0 ? (
           results.map((image, index) => (

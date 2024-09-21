@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, FormEvent } from 'react';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
+import { Search, Loader, Image as ImageIcon } from 'lucide-react';
 
 interface SearchResult {
   url: string;
@@ -28,6 +30,7 @@ const PeeKaboo: React.FC = () => {
   const [results, setResults] = useState<ImageResult[]>([]);
   const [summary, setSummary] = useState<string>('');
   const [metadata, setMetadata] = useState<string>('');
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const questions = [
     "What is today's breaking news?",
@@ -39,7 +42,7 @@ const PeeKaboo: React.FC = () => {
   useEffect(() => {
     // Load font
     const link = document.createElement('link');
-    link.href = 'https://fonts.gstatic.com/s/vt323/v17/pxiKyp0ihIEF2isfFJU.woff2';
+    link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
     link.rel = 'stylesheet';
     document.head.appendChild(link);
 
@@ -48,8 +51,7 @@ const PeeKaboo: React.FC = () => {
     };
   }, []);
 
-  const typeWriterFromJSON = (jsonData: GroqResponse, element: HTMLElement, speed: number = 5) => {
-    const content = jsonData.choices[0].message.content;
+  const typeWriterEffect = (content: string, element: HTMLElement, speed: number = 5) => {
     const sentences = content.split('\n\n');
     element.innerHTML = '';
 
@@ -166,8 +168,9 @@ Here are the provided citations:`;
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setResults([]);
-    setSummary('Processing query...');
+    setSummary('');
     setMetadata('');
+    setIsLoading(true);
 
     try {
       const [snippets, images] = await Promise.all([searchWithGoogle(query), searchImagesWithGoogle(query)]);
@@ -191,54 +194,109 @@ Here are the provided citations:`;
       // Use typewriter effect
       const summaryElement = document.getElementById('summary');
       if (summaryElement) {
-        typeWriterFromJSON({ choices: [{ message: { content } }] }, summaryElement);
+        typeWriterEffect(content, summaryElement);
       }
     } catch (error) {
       console.error('Error:', error);
       setSummary(`An error occurred while processing your query: ${(error as Error).message}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="container">
-      <h1>PeeKaboo?</h1>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter your query..."
-          required
-        />
-        <button type="submit">EXECUTE</button>
-      </form>
-      <div id="suggestions">
-        {questions.map((q, index) => (
-          <span key={index} className="question" onClick={() => setQuery(q)}>
-            {q}
-          </span>
-        ))}
-      </div>
-      <div id="results">
-        {results.length > 0 ? (
-          results.map((image, index) => (
-            <Image key={index} src={image.url} alt={`Image ${index + 1}`} width={200} height={200} />
-          ))
-        ) : (
-          <p>No images found.</p>
+    <div className="min-h-screen bg-gray-900 text-yellow-300 font-['VT323',monospace] p-4">
+      <div className="max-w-4xl mx-auto">
+        <motion.h1 
+          className="text-6xl text-center my-8"
+          initial={{ opacity: 0, y: -50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          PeeKaboo?
+        </motion.h1>
+        <form onSubmit={handleSubmit} className="mb-8">
+          <div className="flex items-center bg-gray-800 rounded-lg overflow-hidden">
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Enter your query..."
+              className="flex-grow p-4 bg-transparent text-yellow-300 placeholder-yellow-600 focus:outline-none"
+              required
+            />
+            <button 
+              type="submit" 
+              className="p-4 bg-yellow-600 hover:bg-yellow-500 transition-colors duration-200"
+              disabled={isLoading}
+            >
+              {isLoading ? <Loader className="animate-spin" /> : <Search />}
+            </button>
+          </div>
+        </form>
+        <div className="flex flex-wrap gap-2 mb-8">
+          {questions.map((q, index) => (
+            <motion.span
+              key={index}
+              className="px-3 py-1 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700 transition-colors duration-200"
+              onClick={() => setQuery(q)}
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              {q}
+            </motion.span>
+          ))}
+        </div>
+        {results.length > 0 && (
+          <div className="mb-8">
+            <h2 className="text-2xl mb-4">Related Images</h2>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              {results.map((image, index) => (
+                <motion.div
+                  key={index}
+                  className="relative aspect-square bg-gray-800 rounded-lg overflow-hidden"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.3, delay: index * 0.1 }}
+                >
+                  <Image 
+                    src={image.url} 
+                    alt={`Image ${index + 1}`} 
+                    layout="fill"
+                    objectFit="cover"
+                    className="transition-transform duration-200 hover:scale-110"
+                  />
+                </motion.div>
+              ))}
+            </div>
+          </div>
         )}
+        {summary && (
+          <motion.div 
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <h2 className="text-2xl mb-4">Summary</h2>
+            <div id="summary" className="bg-gray-800 p-6 rounded-lg" />
+          </motion.div>
+        )}
+        {metadata && (
+          <motion.div 
+            className="mb-8"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+          >
+            <h2 className="text-2xl mb-4">Metadata</h2>
+            <pre className="bg-gray-800 p-6 rounded-lg whitespace-pre-wrap">{metadata}</pre>
+          </motion.div>
+        )}
+        <footer className="text-center text-gray-500 mt-8">
+          &copy; 2024 PeeKaboo | Powered by Illuminati
+        </footer>
       </div>
-      <div id="summary">
-        <h2>{query}</h2>
-        <div dangerouslySetInnerHTML={{ __html: summary }} />
-      </div>
-      <div id="metadata">
-        <h2>Metadata</h2>
-        <pre>{metadata}</pre>
-      </div>
-      <footer>
-        &copy; 2024 PeeKaboo | Powered by Illuminati
-      </footer>
     </div>
   );
 };

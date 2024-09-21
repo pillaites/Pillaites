@@ -204,7 +204,7 @@ Here are the provided citations:`;
   };
 
   return (
-    <div className="min-h-screen bg-gray-900 text-yellow-300 font-['VT323',monospace] p-4">
+    <div className="min-h-screen bg-[hsl(var(--background))] text-[hsl(var(--foreground))] font-['VT323', monospace] p-4">
       <div className="max-w-4xl mx-auto">
         <motion.h1 
           className="text-6xl text-center my-8"
@@ -215,18 +215,18 @@ Here are the provided citations:`;
           PeeKaboo?
         </motion.h1>
         <form onSubmit={handleSubmit} className="mb-8">
-          <div className="flex items-center bg-gray-800 rounded-lg overflow-hidden">
+          <div className="flex items-center bg-[hsl(var(--card))] rounded-lg overflow-hidden">
             <input
               type="text"
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               placeholder="Enter your query..."
-              className="flex-grow p-4 bg-transparent text-yellow-300 placeholder-yellow-600 focus:outline-none"
+              className="flex-grow p-4 bg-transparent text-[hsl(var(--foreground))] placeholder-[hsl(var(--muted-foreground))] focus:outline-none"
               required
             />
             <button 
               type="submit" 
-              className="p-4 bg-yellow-600 hover:bg-yellow-500 transition-colors duration-200"
+              className="p-4 bg-[hsl(var(--primary))] hover:bg-[hsl(var(--primary-foreground))] transition-colors duration-200"
               disabled={isLoading}
             >
               {isLoading ? <Loader className="animate-spin" /> : <Search />}
@@ -237,7 +237,7 @@ Here are the provided citations:`;
           {questions.map((q, index) => (
             <motion.span
               key={index}
-              className="px-3 py-1 bg-gray-800 rounded-full cursor-pointer hover:bg-gray-700 transition-colors duration-200"
+              className="px-3 py-1 bg-[hsl(var(--card))] rounded-full cursor-pointer hover:bg-[hsl(var(--secondary))] transition-colors duration-200"
               onClick={() => setQuery(q)}
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
@@ -253,12 +253,11 @@ Here are the provided citations:`;
               {results.map((image, index) => (
                 <motion.div
                   key={index}
-                  className="relative aspect-square bg-gray-800 rounded-lg overflow-hidden"
+                  className="relative aspect-square bg-[hsl(var(--card))] rounded-lg overflow-hidden"
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ duration: 0.3, delay: index * 0.1 }}
                 >
-                  {/* Use img tag instead of Next.js Image component */}
                   <img 
                     src={image.url} 
                     alt={`Image ${index + 1}`} 
@@ -277,7 +276,7 @@ Here are the provided citations:`;
             transition={{ duration: 0.5 }}
           >
             <h2 className="text-2xl mb-4">Summary</h2>
-            <div id="summary" className="bg-gray-800 p-6 rounded-lg" />
+            <div id="summary" className="bg-[hsl(var(--card))] p-6 rounded-lg" />
           </motion.div>
         )}
         {metadata && (
@@ -288,10 +287,10 @@ Here are the provided citations:`;
             transition={{ duration: 0.5, delay: 0.2 }}
           >
             <h2 className="text-2xl mb-4">Metadata</h2>
-            <pre className="bg-gray-800 p-6 rounded-lg whitespace-pre-wrap">{metadata}</pre>
+            <pre className="bg-[hsl(var(--card))] p-6 rounded-lg whitespace-pre-wrap">{metadata}</pre>
           </motion.div>
         )}
-        <footer className="text-center text-gray-500 mt-8">
+        <footer className="text-center text-[hsl(var(--muted-foreground))] mt-8">
           &copy; 2024 PeeKaboo | Powered by Illuminati
         </footer>
       </div>

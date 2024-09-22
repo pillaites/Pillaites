@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useQueryClient } from "@tanstack/react-query";
-import { MailPlus } from "lucide-react";
+import { MailPlus, X } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import {
   ChannelList,
@@ -13,13 +13,15 @@ import { useSession } from "../SessionProvider";
 import NewChatDialog from "./NewChatDialog";
 
 interface ChatSidebarProps {
-  isVisible: boolean;
-  onSelectChannel: () => void;
+  open: boolean;
+  onClose: () => void;
 }
 
-export default function ChatSidebar({ isVisible, onSelectChannel }: ChatSidebarProps) {
+export default function ChatSidebar({ open, onClose }: ChatSidebarProps) {
   const { user } = useSession();
+
   const queryClient = useQueryClient();
+
   const { channel } = useChatContext();
 
   useEffect(() => {
@@ -34,21 +36,21 @@ export default function ChatSidebar({ isVisible, onSelectChannel }: ChatSidebarP
         {...props}
         onSelect={() => {
           props.setActiveChannel?.(props.channel, props.watchers);
-          onSelectChannel();
+          onClose();
         }}
       />
     ),
-    [onSelectChannel],
+    [onClose],
   );
 
   return (
     <div
       className={cn(
-        "h-full w-full flex-col border-e md:flex md:w-72",
-        isVisible ? "flex" : "hidden",
+        "size-full flex-col border-e md:flex md:w-72",
+        open ? "flex" : "hidden",
       )}
     >
-      <MenuHeader />
+      <MenuHeader onClose={onClose} />
       <ChannelList
         filters={{
           type: "messaging",
@@ -71,13 +73,22 @@ export default function ChatSidebar({ isVisible, onSelectChannel }: ChatSidebarP
   );
 }
 
-function MenuHeader() {
+interface MenuHeaderProps {
+  onClose: () => void;
+}
+
+function MenuHeader({ onClose }: MenuHeaderProps) {
   const [showNewChatDialog, setShowNewChatDialog] = useState(false);
 
   return (
     <>
-      <div className="flex items-center justify-between p-4 bg-card border-b">
-        <h1 className="text-xl font-bold">Messages</h1>
+      <div className="flex items-center gap-3 p-2">
+        <div className="h-full md:hidden">
+          <Button size="icon" variant="ghost" onClick={onClose}>
+            <X className="size-5" />
+          </Button>
+        </div>
+        <h1 className="me-auto text-xl font-bold md:ms-2">Messages</h1>
         <Button
           size="icon"
           variant="ghost"
@@ -90,7 +101,10 @@ function MenuHeader() {
       {showNewChatDialog && (
         <NewChatDialog
           onOpenChange={setShowNewChatDialog}
-          onChatCreated={() => setShowNewChatDialog(false)}
+          onChatCreated={() => {
+            setShowNewChatDialog(false);
+            onClose();
+          }}
         />
       )}
     </>

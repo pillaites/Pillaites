@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect, FormEvent } from 'react';
+import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Search, Loader } from 'lucide-react';
 
@@ -20,65 +21,47 @@ interface GroqResponse {
 
 const PeeKaboo: React.FC = () => {
   const [query, setQuery] = useState<string>('');
-  const [results, setResults] = useState<ImageResult[]>([]);
+  const [imageResults, setImageResults] = useState<ImageResult[]>([]);
   const [summary, setSummary] = useState<string>('');
   const [metadata, setMetadata] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const questions = [
+  const exampleQuestions = [
     "What is today's breaking news?",
     "Trends in computer science technology",
     "Software Testing Methods",
-    "Why is interstellar the best movie?"
+    "Why is interstellar the best movie?",
   ];
 
   useEffect(() => {
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
+    const fontLink = document.createElement('link');
+    fontLink.href = 'https://fonts.googleapis.com/css2?family=VT323&display=swap';
+    fontLink.rel = 'stylesheet';
+    document.head.appendChild(fontLink);
     
     return () => {
-      document.head.removeChild(link);
+      document.head.removeChild(fontLink);
     };
   }, []);
 
-  const typeWriterEffect = (content: string, element: HTMLElement, speed: number = 5) => {
-    const sentences = content.split('\n\n');
-    element.innerHTML = '';
-
-    let sentenceIndex = 0;
+  const typeWriterEffect = (text: string, element: HTMLElement, speed: number = 50) => {
+    element.innerHTML = ''; // Clear previous content
     let charIndex = 0;
 
-    const typeChar = () => {
-      if (sentenceIndex < sentences.length) {
-        const currentSentence = sentences[sentenceIndex];
-        
-        if (charIndex === 0) {
-          const p = document.createElement('p');
-          element.appendChild(p);
-        }
-
-        const p = element.lastElementChild as HTMLParagraphElement;
-        p.innerHTML += currentSentence[charIndex];
+    const typeNextChar = () => {
+      if (charIndex < text.length) {
+        element.innerHTML += text[charIndex];
         charIndex++;
-
-        if (charIndex >= currentSentence.length) {
-          charIndex = 0;
-          sentenceIndex++;
-          setTimeout(typeChar, speed * 2);
-        } else {
-          setTimeout(typeChar, speed);
-        }
+        setTimeout(typeNextChar, speed);
       }
     };
 
-    typeChar();
+    typeNextChar();
   };
 
-  const searchWithGoogle = async (query: string, numSources: number = 15): Promise<SearchResult[]> => {
-    const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numSources}`;
+  const fetchGoogleSearchResults = async (query: string, numResults: number = 10): Promise<SearchResult[]> => {
+    const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numResults}`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Google search failed: ${response.statusText}`);
     
@@ -89,7 +72,7 @@ const PeeKaboo: React.FC = () => {
     })) || [];
   };
 
-  const searchImagesWithGoogle = async (query: string, numImages: number = 4): Promise<ImageResult[]> => {
+  const fetchGoogleImages = async (query: string, numImages: number = 5): Promise<ImageResult[]> => {
     const url = `https://www.googleapis.com/customsearch/v1?key=${process.env.NEXT_PUBLIC_GOOGLE_API_KEY}&cx=${process.env.NEXT_PUBLIC_GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(query)}&num=${numImages}&searchType=image`;
     const response = await fetch(url);
     if (!response.ok) throw new Error(`Google image search failed: ${response.statusText}`);
@@ -98,29 +81,24 @@ const PeeKaboo: React.FC = () => {
     return data.items?.map((item: any) => ({ url: item.link })) || [];
   };
 
-  const getPromptContext = (snippets: SearchResult[], images: ImageResult[]): string => {
-    const snippetsText = snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
-    const imagesText = images.map((_, i) => `Image ${i + 1}: [Brief description and relevance to the topic]`).join('\n');
+  const generatePromptContext = (snippets: SearchResult[], images: ImageResult[]): string => {
+    const snippetText = snippets.map((s, i) => `[citation:${i + 1}] ${s.snippet}`).join('\n\n');
+    const imageText = images.map((_, i) => `Image ${i + 1}: [Description of relevance]`).join('\n');
 
-    return `Answer the following based on the provided information:
+    return `Answer the following question with detailed accuracy:
 
-1. Provide a detailed, paragraphed, comprehensive answer to the question. It must be accurate, high-quality, and expertly written in a positive, interesting, and engaging manner. The answer should be informative and in the same language as the user question. Aim for at least 300 words in your response.
+1. Provide a detailed, high-quality response to the question.
+2. Include "Image Descriptions" at the end, explaining how each image is related.
+3. Use citations in the format [citation:x] for text references.
 
-2. After your main answer, provide a section titled "Image Descriptions" where you describe how each of the provided images relates to the topic. Use the format: "Image X: [Brief description and relevance to the topic]"
+Here are the snippets:
+${snippetText}
 
-Always use the related citations and cite them at the end of each sentence in the format [citation:x]. If a sentence comes from multiple citations, list all applicable citations, like [citation:2][citation:3].
-
-Here are the provided citations:
-
-${snippetsText}
-
-Here are descriptions of relevant images:
-${imagesText}
-
-Use the provided information to create a comprehensive and engaging response.`;
+Here are the images:
+${imageText}`;
   };
 
-  const requestGroq = async (query: string, context: string): Promise<GroqResponse> => {
+  const fetchSummaryFromGroq = async (query: string, context: string): Promise<GroqResponse> => {
     const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: 'POST',
       headers: {
@@ -144,23 +122,22 @@ Use the provided information to create a comprehensive and engaging response.`;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setResults([]);
-    setSummary('');
-    setMetadata('');
     setIsLoading(true);
+    setSummary('');
+    setImageResults([]);
     setError(null);
 
     try {
       const [snippets, images] = await Promise.all([
-        searchWithGoogle(query),
-        searchImagesWithGoogle(query),
+        fetchGoogleSearchResults(query),
+        fetchGoogleImages(query),
       ]);
-      
-      setResults(images);
-      const promptContext = getPromptContext(snippets, images);
-      const data = await requestGroq(query, promptContext);
 
-      const content = data.choices?.[0]?.message?.content || 'No summary available.';
+      setImageResults(images);
+      const context = generatePromptContext(snippets, images);
+      const groqResponse = await fetchSummaryFromGroq(query, context);
+
+      const content = groqResponse.choices?.[0]?.message?.content || 'No summary available.';
       setSummary(content);
       setMetadata(`Query: ${query}\nModel: mixtral-8x7b-32768`);
 
@@ -171,7 +148,6 @@ Use the provided information to create a comprehensive and engaging response.`;
     } catch (error) {
       console.error('Error:', error);
       setError(`An error occurred: ${(error as Error).message}`);
-      setSummary('');
     } finally {
       setIsLoading(false);
     }
@@ -188,6 +164,7 @@ Use the provided information to create a comprehensive and engaging response.`;
         >
           PeeKaboo?
         </motion.h1>
+
         <form onSubmit={handleSubmit} className="mb-8">
           <div className="flex items-center bg-[hsl(var(--card))] rounded-lg overflow-hidden">
             <input
@@ -207,8 +184,9 @@ Use the provided information to create a comprehensive and engaging response.`;
             </button>
           </div>
         </form>
+
         <div className="flex flex-wrap justify-center mb-8">
-          {questions.map((q, index) => (
+          {exampleQuestions.map((q, index) => (
             <motion.span
               key={index}
               className="inline-block m-2 px-4 py-2 bg-[hsl(var(--card))] rounded-full cursor-pointer hover:bg-yellow-500 transition-colors duration-200 text-yellow-500"
@@ -218,18 +196,22 @@ Use the provided information to create a comprehensive and engaging response.`;
             </motion.span>
           ))}
         </div>
-        {isLoading && <Loader className="mx-auto my-4" />}
+
+        {isLoading && <Loader className="mx-auto my-4 animate-spin" />}
+        {error && <p className="text-red-500">{error}</p>}
+
         <div id="summary" className="mt-4"></div>
         {summary && <p className="mt-4">{summary}</p>}
         {metadata && <p className="mt-4 text-gray-500">{metadata}</p>}
-        
-        {/* Render Images */}
+
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-          {results.map((image, index) => (
-            <img 
+          {imageResults.map((image, index) => (
+            <Image 
               key={index} 
               src={image.url} 
               alt={`Image ${index + 1}`} 
+              width={300}
+              height={300}
               className="w-full h-auto rounded-lg shadow-md"
             />
           ))}

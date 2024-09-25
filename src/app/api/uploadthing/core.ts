@@ -8,7 +8,7 @@ const f = createUploadthing();
 
 export const fileRouter = {
   avatar: f({
-    image: { maxFileSize: "2MB", maxFileCount: 1 },  // Set max file size to 2MB and allow only 1 file
+    image: { maxFileSize: "2MB", maxFileCount: 1 }, // Limit to 1 image under 2MB
   })
     .middleware(async () => {
       const { user } = await validateRequest();

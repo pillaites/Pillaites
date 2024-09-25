@@ -16,13 +16,6 @@ export async function signUp(
   try {
     const { username, email, password } = signUpSchema.parse(credentials);
 
-    // Check if the email ends with '@student.mes.ac.in'
-    if (!email.endsWith("@student.mes.ac.in")) {
-      return {
-        error: "Email must be from the domain @student.mes.ac.in",
-      };
-    }
-
     const passwordHash = await hash(password, {
       memoryCost: 19456,
       timeCost: 2,

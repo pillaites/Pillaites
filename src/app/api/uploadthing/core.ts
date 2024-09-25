@@ -5,10 +5,9 @@ import { createUploadthing, FileRouter } from "uploadthing/next";
 import { UploadThingError, UTApi } from "uploadthing/server";
 
 const f = createUploadthing();
-
 export const fileRouter = {
   avatar: f({
-    image: { maxFileSize: "2MB", maxFileCount: 1 }, // Limit to 1 image under 2MB
+    image: { maxFileSize: "2MB", maxFileCount: 1 },
   })
     .middleware(async () => {
       const { user } = await validateRequest();
@@ -49,6 +48,30 @@ export const fileRouter = {
       ]);
 
       return { avatarUrl: newAvatarUrl };
+    }),
+
+  attachment: f({
+    image: { maxFileSize: "4MB", maxFileCount: 1 },  // Add attachment route
+  })
+    .middleware(async () => {
+      const { user } = await validateRequest();
+
+      if (!user) throw new UploadThingError("Unauthorized");
+
+      return { user };
+    })
+    .onUploadComplete(async ({ file }) => {
+      const media = await prisma.media.create({
+        data: {
+          url: file.url.replace(
+            "/f/",
+            `/a/${process.env.NEXT_PUBLIC_UPLOADTHING_APP_ID}/`,
+          ),
+          type: "IMAGE",
+        },
+      });
+
+      return { mediaId: media.id };
     }),
 } satisfies FileRouter;
 

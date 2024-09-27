@@ -54,35 +54,6 @@ export default function UserButton({ className }: UserButtonProps) {
           </DropdownMenuItem>
         </Link>
 
-        <Link href="/voting">
-          <DropdownMenuItem>
-            <Vote className="mr-2 size-4" />
-            Voting
-          </DropdownMenuItem>
-        </Link>
-
-        <Link href="/about">
-          <DropdownMenuItem>
-            <Info className="mr-2 size-4" />
-            About
-          </DropdownMenuItem>
-        </Link>
-
-        {/* Updated menu item for women's safety */}
-        <Link href="/women">
-          <DropdownMenuItem>
-            <Shield className="mr-2 size-4" />
-            Women's Safety
-          </DropdownMenuItem>
-        </Link>
-
-        <Link href="/peekaboo">
-          <DropdownMenuItem>
-            <Search className="mr-2 size-4" />
-            PeekaBoo
-          </DropdownMenuItem>
-        </Link>
-
         <DropdownMenuSub>
           <DropdownMenuSubTrigger>
             <Monitor className="mr-2 size-4" />

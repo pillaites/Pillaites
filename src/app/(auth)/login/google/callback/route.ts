@@ -1,21 +1,21 @@
 import { NextResponse } from 'next/server';
 import { OAuth2Client } from 'google-auth-library';
 
+// Define an interface for the user information you expect from Google
+interface UserInfo {
+  id: string;
+  email: string;
+  name: string;
+  picture: string;
+  // Add any other fields you need from the user info
+}
+
 // Initialize the OAuth2 client with your credentials
 const oauth2Client = new OAuth2Client(
   process.env.GOOGLE_CLIENT_ID,
   process.env.GOOGLE_CLIENT_SECRET,
   `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback` // Redirect URL
 );
-
-// Define a type for user information
-interface UserInfo {
-  id: string;
-  email: string;
-  given_name: string;
-  family_name: string;
-  picture: string;
-}
 
 // Handler for the OAuth2 callback route
 export async function GET(request: Request) {
@@ -42,7 +42,7 @@ export async function GET(request: Request) {
       },
     });
 
-    const userInfo = userInfoResponse.data as UserInfo; // Explicitly cast userInfoResponse.data to UserInfo
+    const userInfo = userInfoResponse.data as UserInfo; // Cast to UserInfo type
     const email = userInfo.email;
 
     // Validate the user's email or perform any necessary operations

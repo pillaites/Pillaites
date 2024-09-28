@@ -1,30 +1,49 @@
-import { google } from "@/auth"; // Adjust import as necessary
-import { generateCodeVerifier, generateState } from "arctic"; // Adjust import as necessary
-import { cookies } from "next/headers";
+import { OAuth2Client } from 'google-auth-library'; // Use the correct library
+import { cookies } from 'next/headers';
+import prisma from "@/lib/prisma"; // Adjust import as necessary
 
-export async function GET() {
-  const state = generateState();
-  const codeVerifier = generateCodeVerifier();
+const oauth2Client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URL);
 
-  const url = await google.createAuthorizationURL(state, codeVerifier, {
-    scopes: ["profile", "email"],
-  });
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const state = cookies().get("state")?.value;
+  const codeVerifier = cookies().get("code_verifier")?.value;
 
-  cookies().set("state", state, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
-    sameSite: "lax",
-  });
+  try {
+    // Use the correct method to get tokens
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
 
-  cookies().set("code_verifier", codeVerifier, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
-    sameSite: "lax",
-  });
+    const userInfoResponse = await oauth2Client.request({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`,
+      },
+    });
 
-  return Response.redirect(url);
+    const userInfo = userInfoResponse.data;
+    const email = userInfo.email;
+
+    const isEmailValid = await prisma.$transaction(async (tx) => {
+      const invite = await tx.invite.findFirst({
+        where: { email },
+      });
+
+      const user = await tx.user.findFirst({
+        where: { email },
+      });
+
+      return invite !== null || user !== null;
+    });
+
+    if (!isEmailValid) {
+      return new Response("Unauthorized: Email not invited or registered", { status: 401 });
+    }
+
+    return new Response("User authenticated successfully!");
+  } catch (error) {
+    console.error(error);
+    return new Response("Authentication failed", { status: 500 });
+  }
 }

@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { OAuth2Client, GetTokenResponse } from 'google-auth-library';
+import { OAuth2Client } from 'google-auth-library';
 
 // Define an interface for the user information you expect from Google
 interface UserInfo {
@@ -26,9 +26,8 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Await the token response
-    const tokenResponse: GetTokenResponse = await oauth2Client.getToken(code);
-    const tokens = tokenResponse.tokens; // Access tokens here
+    // Await the token response without GetTokenResponse type
+    const { tokens } = await oauth2Client.getToken(code);
 
     // Set the credentials for the client
     oauth2Client.setCredentials(tokens);

@@ -1,30 +1,66 @@
-import { google } from "@/auth";
-import { generateCodeVerifier, generateState } from "arctic";
-import { cookies } from "next/headers";
+import { OAuth2Client } from 'google-auth-library'; // Use the correct library
+import { cookies } from 'next/headers';
+import prisma from "@/lib/prisma"; // Adjust import as necessary
 
-export async function GET() {
-  const state = generateState();
-  const codeVerifier = generateCodeVerifier();
+const oauth2Client = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.REDIRECT_URL
+);
 
-  const url = await google.createAuthorizationURL(state, codeVerifier, {
-    scopes: ["profile", "email"],
-  });
+// Define an interface for the user information you expect from Google
+interface UserInfo {
+  id: string;
+  email: string;
+  name: string;
+  picture: string;
+}
 
-  cookies().set("state", state, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
-    sameSite: "lax",
-  });
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const code = url.searchParams.get("code");
+  const state = cookies().get("state")?.value;
+  const codeVerifier = cookies().get("code_verifier")?.value;
 
-  cookies().set("code_verifier", codeVerifier, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
-    sameSite: "lax",
-  });
+  if (!code) {
+    return new Response("Code not provided", { status: 400 });
+  }
 
-  return Response.redirect(url);
+  try {
+    // Use the correct method to get tokens
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    const userInfoResponse = await oauth2Client.request({
+      url: 'https://www.googleapis.com/oauth2/v2/userinfo',
+      headers: {
+        Authorization: `Bearer ${tokens.access_token}`,
+      },
+    });
+
+    // Explicitly type the userInfoResponse.data as UserInfo
+    const userInfo = userInfoResponse.data as UserInfo;
+    const email = userInfo.email; // Now TypeScript knows userInfo has an email property
+
+    const isEmailValid = await prisma.$transaction(async (tx) => {
+      const invite = await tx.invite.findFirst({
+        where: { email },
+      });
+
+      const user = await tx.user.findFirst({
+        where: { email },
+      });
+
+      return invite !== null || user !== null;
+    });
+
+    if (!isEmailValid) {
+      return new Response("Unauthorized: Email not invited or registered", { status: 401 });
+    }
+
+    return new Response("User authenticated successfully!", { status: 200 });
+  } catch (error) {
+    console.error("Authentication error:", error);
+    return new Response("Authentication failed", { status: 500 });
+  }
 }

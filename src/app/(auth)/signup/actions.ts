@@ -16,6 +16,22 @@ export async function signUp(
   try {
     const { username, email, password } = signUpSchema.parse(credentials);
 
+    // Check if the email exists in the invite table
+    const invitedEmail = await prisma.invite.findFirst({
+      where: {
+        email: {
+          equals: email,
+          mode: "insensitive",
+        },
+      },
+    });
+
+    if (!invitedEmail) {
+      return {
+        error: "You are not invited! You are not a Pillaite!",
+      };
+    }
+
     const passwordHash = await hash(password, {
       memoryCost: 19456,
       timeCost: 2,
@@ -56,6 +72,7 @@ export async function signUp(
     }
 
     await prisma.$transaction(async (tx) => {
+      // Create the user
       await tx.user.create({
         data: {
           id: userId,
@@ -65,6 +82,14 @@ export async function signUp(
           passwordHash,
         },
       });
+
+      // Remove email from invite table after successful creation
+      await tx.invite.delete({
+        where: {
+          email: email,
+        },
+      });
+
       await streamServerClient.upsertUser({
         id: userId,
         username,

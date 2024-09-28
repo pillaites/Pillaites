@@ -9,7 +9,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 import { Loader2 } from "lucide-react";
 
 export default function NewsFeed() {
-  // Fetch posts for the "news" handle
+  // Fetch posts for the specified ID
   const {
     data,
     fetchNextPage,
@@ -18,11 +18,11 @@ export default function NewsFeed() {
     isFetchingNextPage,
     status,
   } = useInfiniteQuery({
-    queryKey: ["post-feed", "news"],
+    queryKey: ["post-feed", "k3neezdm3cbofnms"], // Updated to use ID
     queryFn: ({ pageParam }) =>
       kyInstance
         .get(
-          "/api/posts/news", // Updated route for "news" posts
+          "/api/posts/news", // Route for "news" posts
           pageParam ? { searchParams: { cursor: pageParam } } : {}
         )
         .json<PostsPage>(),

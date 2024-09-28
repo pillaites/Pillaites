@@ -2,13 +2,21 @@ import { OAuth2Client } from 'google-auth-library'; // Use the correct library
 import { cookies } from 'next/headers';
 import prisma from "@/lib/prisma"; // Adjust import as necessary
 
-const oauth2Client = new OAuth2Client(process.env.CLIENT_ID, process.env.CLIENT_SECRET, process.env.REDIRECT_URL);
+const oauth2Client = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  process.env.REDIRECT_URL
+);
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
   const state = cookies().get("state")?.value;
   const codeVerifier = cookies().get("code_verifier")?.value;
+
+  if (!code) {
+    return new Response("Code not provided", { status: 400 });
+  }
 
   try {
     // Use the correct method to get tokens
@@ -41,9 +49,9 @@ export async function GET(request: Request) {
       return new Response("Unauthorized: Email not invited or registered", { status: 401 });
     }
 
-    return new Response("User authenticated successfully!");
+    return new Response("User authenticated successfully!", { status: 200 });
   } catch (error) {
-    console.error(error);
+    console.error("Authentication error:", error);
     return new Response("Authentication failed", { status: 500 });
   }
 }

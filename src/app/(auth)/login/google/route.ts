@@ -1,23 +1,21 @@
 import { google } from "@/auth";
 import { generateCodeVerifier, generateState } from "arctic";
 import { cookies } from "next/headers";
-import prisma from "@/lib/prisma";  // Import the Prisma client
+import prisma from "@/lib/prisma";
 
 export async function GET() {
   const state = generateState();
   const codeVerifier = generateCodeVerifier();
 
-  // Create the Google authorization URL
   const url = await google.createAuthorizationURL(state, codeVerifier, {
     scopes: ["profile", "email"],
   });
 
-  // Store state and code_verifier in cookies for later verification
   cookies().set("state", state, {
     path: "/",
     secure: process.env.NODE_ENV === "production",
     httpOnly: true,
-    maxAge: 60 * 10, // 10 minutes
+    maxAge: 60 * 10,
     sameSite: "lax",
   });
 
@@ -25,52 +23,60 @@ export async function GET() {
     path: "/",
     secure: process.env.NODE_ENV === "production",
     httpOnly: true,
-    maxAge: 60 * 10, // 10 minutes
+    maxAge: 60 * 10,
     sameSite: "lax",
   });
 
-  // Redirect the user to Google for authentication
   return Response.redirect(url);
 }
 
-// New function to handle the OAuth callback and email verification
-export async function handleGoogleCallback(request) {
-  const { code } = request.query;
+// Callback route after Google redirect
+export async function callback({ request }) {
+  const code = request.query.get('code');
+  const state = request.cookies.get("state");
+  const codeVerifier = request.cookies.get("code_verifier");
 
-  // Verify the state and code_verifier from cookies
-  const storedState = cookies().get("state");
-  const storedCodeVerifier = cookies().get("code_verifier");
+  try {
+    // Verify and exchange the authorization code for tokens
+    const tokenResponse = await google.handleAuthorizationCallback({
+      code,
+      codeVerifier,
+      state
+    });
 
-  if (!storedState || !storedCodeVerifier) {
-    return new Response("Invalid OAuth state", { status: 400 });
+    const userInfo = await google.getUserInfo(tokenResponse.access_token);
+
+    // Extract email from userInfo
+    const email = userInfo.email;
+
+    // Check if the email exists in either Invite or User table
+    const isEmailValid = await prisma.$transaction(async (tx) => {
+      const invite = await tx.invite.findFirst({
+        where: {
+          email: email,
+        },
+      });
+
+      const user = await tx.user.findFirst({
+        where: {
+          email: email,
+        },
+      });
+
+      return invite !== null || user !== null;
+    });
+
+    if (!isEmailValid) {
+      return new Response("Unauthorized: Email not invited or registered", { status: 401 });
+    }
+
+    // Proceed with the authentication or account creation
+    // You could either create a new user or sign in an existing one
+    // (depends on your application's logic)
+
+    return new Response("User authenticated successfully!");
+  } catch (error) {
+    console.error(error);
+    return new Response("Authentication failed", { status: 500 });
   }
-
-  // Exchange the code for tokens and retrieve the user's profile
-  const tokens = await google.exchangeCodeForTokens({
-    code,
-    codeVerifier: storedCodeVerifier,
-  });
-
-  const userProfile = await google.getUserProfile(tokens.access_token);
-
-  // Check if the user's email exists in the Invite table
-  const invitedUser = await prisma.invite.findUnique({
-    where: { email: userProfile.email },
-  });
-
-  // If the email is not in the invite list, deny access
-  if (!invitedUser) {
-    return new Response("Your email is not on the invite list.", { status: 403 });
-  }
-
-  // If the email is in the invite list, proceed with account creation or login
-  // ... (your existing account creation or session logic here)
-
-  // Optionally, remove the email from the Invite table after successful signup
-  await prisma.invite.delete({
-    where: { email: userProfile.email },
-  });
-
-  // Redirect to the homepage or dashboard after successful login/signup
-  return Response.redirect("/");
 }

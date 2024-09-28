@@ -1,22 +1,29 @@
+import { NextResponse } from 'next/server';
 import { OAuth2Client } from 'google-auth-library';
-import { cookies } from 'next/headers';
 
-const CLIENT_ID = process.env.GOOGLE_CLIENT_ID; // Get Google Client ID from environment variables
-const CLIENT_SECRET = process.env.GOOGLE_CLIENT_SECRET; // Get Google Client Secret from environment variables
-const REDIRECT_URL = `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback/google`; // Redirect URL using base URL from environment variables
+// Initialize the OAuth2 client with your credentials
+const oauth2Client = new OAuth2Client(
+  process.env.GOOGLE_CLIENT_ID,
+  process.env.GOOGLE_CLIENT_SECRET,
+  `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback` // Redirect URL
+);
 
-const oauth2Client = new OAuth2Client(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-
+// Handler for the OAuth2 callback route
 export async function GET(request: Request) {
-  const url = new URL(request.url);
-  const code = url.searchParams.get("code"); // Get the code from the query parameters
-  const state = cookies().get("state")?.value; // Retrieve state from cookies
-  const codeVerifier = cookies().get("code_verifier")?.value; // Retrieve code verifier from cookies
+  const { searchParams } = new URL(request.url);
+  const code = searchParams.get('code');
+
+  if (!code) {
+    return NextResponse.error(); // Handle the case where no code is provided
+  }
 
   try {
     // Exchange the authorization code for tokens
-    const { tokens } = await oauth2Client.getToken(code);
-    oauth2Client.setCredentials(tokens); // Set the credentials for the client
+    const tokenResponse = await oauth2Client.getToken(code);
+    const tokens = tokenResponse.tokens;
+
+    // Set the credentials for the client
+    oauth2Client.setCredentials(tokens);
 
     // Make a request to get user information
     const userInfoResponse = await oauth2Client.request({
@@ -26,15 +33,17 @@ export async function GET(request: Request) {
       },
     });
 
-    const userInfo = userInfoResponse.data; // Get user information
-    const email = userInfo.email; // Extract email
+    const userInfo = userInfoResponse.data;
+    const email = userInfo.email;
 
     // Validate the user's email or perform any necessary operations
     console.log("Authenticated user's email:", email);
 
-    return new Response("User authenticated successfully!"); // Return a success response
+    // You can add logic here to save the user info to your database if needed
+
+    return NextResponse.json({ message: 'User authenticated successfully!', user: userInfo }); // Return user info as JSON
   } catch (error) {
-    console.error("Authentication error:", error); // Log any errors for debugging
-    return new Response("Authentication failed", { status: 500 }); // Return a failure response
+    console.error("Authentication error:", error);
+    return NextResponse.json({ message: 'Authentication failed', error: error.message }, { status: 500 }); // Return a failure response
   }
 }

@@ -1,85 +1,57 @@
-import { google } from "@/auth";
-import { generateCodeVerifier, generateState } from "arctic";
+import { google } from 'googleapis'; // Assuming googleapis is used
 import { cookies } from "next/headers";
 import prisma from "@/lib/prisma";
 import { NextRequest, NextResponse } from "next/server";
 
-// GET request to initiate Google OAuth
-export async function GET() {
-  const state = generateState();
-  const codeVerifier = generateCodeVerifier();
-
-  // Generate the Google OAuth URL
-  const url = await google.createAuthorizationURL(state, codeVerifier, {
-    scopes: ["profile", "email"],
-  });
-
-  // Set cookies for state and code_verifier with security settings
-  cookies().set("state", state, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
-    sameSite: "lax",
-  });
-
-  cookies().set("code_verifier", codeVerifier, {
-    path: "/",
-    secure: process.env.NODE_ENV === "production",
-    httpOnly: true,
-    maxAge: 60 * 10,
-    sameSite: "lax",
-  });
-
-  // Redirect user to Google authentication URL
-  return NextResponse.redirect(url);
-}
-
-// Handle the callback after Google OAuth
-export async function POST(request: NextRequest) {
-  const { searchParams } = new URL(request.url);
-  const code = searchParams.get("code");
-
-  // Retrieve state and code_verifier from cookies
-  const state = request.cookies.get("state")?.value;
-  const codeVerifier = request.cookies.get("code_verifier")?.value;
+// Callback route after Google OAuth redirect
+export async function callback({ request }: { request: NextRequest }) {
+  const code = request.query.get('code');
+  const state = request.cookies.get("state");
+  const codeVerifier = request.cookies.get("code_verifier");
 
   if (!code || !state || !codeVerifier) {
     return new Response("Invalid request", { status: 400 });
   }
 
   try {
-    // Exchange the authorization code for tokens
-    const tokenResponse = await google.handleAuthorizationCallback({
+    // Exchange authorization code for tokens using the googleapis library
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID,
+      process.env.GOOGLE_CLIENT_SECRET,
+      'YOUR_REDIRECT_URI' // Replace with your actual redirect URI
+    );
+
+    const { tokens } = await oauth2Client.getToken({
       code,
       codeVerifier,
-      state,
     });
 
-    // Fetch user info using the access token
-    const userInfo = await google.getUserInfo(tokenResponse.access_token);
-    const email = userInfo.email;
+    oauth2Client.setCredentials(tokens);
 
-    // Validate if the email exists in either the invites or users table
+    // Get user info
+    const userInfo = await google.oauth2("v2").userinfo.get({
+      auth: oauth2Client,
+    });
+
+    const email = userInfo.data.email;
+
+    // Validate email in the database
     const isEmailValid = await prisma.$transaction(async (tx) => {
       const invite = await tx.invite.findFirst({
         where: { email },
       });
-
       const user = await tx.user.findFirst({
         where: { email },
       });
-
       return !!invite || !!user;
     });
 
     if (!isEmailValid) {
-      return new Response("Unauthorized: You are not a Pillaite!", { status: 401 });
+      return new Response("Unauthorized: Email not invited or registered", { status: 401 });
     }
 
-    // Further logic for authenticated users
-    // (e.g., sign in existing user or create a new account)
-    return new Response("You are Pillaite!", { status: 200 });
+    // Continue with authentication or user creation
+    return new Response("User authenticated successfully!");
   } catch (error) {
     console.error("OAuth callback error:", error);
     return new Response("Authentication failed", { status: 500 });

@@ -1,9 +1,6 @@
 // 🎉 Welcome to your Prisma schema file!
 // Want to dive into the docs? Here's the link: https://pris.ly/d/prisma-schema
 
-// 🚀 Looking to speed up queries or scale easily with serverless or edge functions?
-// Check out Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
@@ -127,37 +124,6 @@ model Bookmark {
   @@map("bookmarks")
 }
 
-model Election {
-  id         String      @id @default(uuid())
-  title      String
-  description String?
-  candidates Candidate[]
-  votes      Vote[]
-  startDate  DateTime
-  endDate    DateTime
-}
-
-model Candidate {
-  id          String      @id @default(uuid())
-  name        String
-  party       String      // Party field added
-  profilePhoto String?   // Profile photo URL
-  electionId  String
-  election    Election    @relation(fields: [electionId], references: [id])
-  votes       Vote[]
-}
-
-model Vote {
-  id          String      @id @default(uuid())
-  userId      String
-  candidateId String
-  candidate   Candidate   @relation(fields: [candidateId], references: [id])
-  electionId  String
-  election    Election    @relation(fields: [electionId], references: [id])
-  
-  @@unique([userId, electionId]) // Ensure each user can only vote once per election
-}
-
 model Notification {
   id          String           @id @default(cuid())
   recipientId String
@@ -178,4 +144,13 @@ enum NotificationType {
   LIKE
   FOLLOW
   COMMENT
+}
+
+// New Invite model for managing invited emails
+model Invite {
+  id    String @id @default(cuid())
+  email String @unique
+  invitedAt DateTime @default(now())  // When the invite was created
+
+  @@map("invites")
 }

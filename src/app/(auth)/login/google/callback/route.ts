@@ -8,6 +8,15 @@ const oauth2Client = new OAuth2Client(
   `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback` // Redirect URL
 );
 
+// Define a type for user information
+interface UserInfo {
+  id: string;
+  email: string;
+  given_name: string;
+  family_name: string;
+  picture: string;
+}
+
 // Handler for the OAuth2 callback route
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -33,7 +42,7 @@ export async function GET(request: Request) {
       },
     });
 
-    const userInfo = userInfoResponse.data;
+    const userInfo = userInfoResponse.data as UserInfo; // Explicitly cast userInfoResponse.data to UserInfo
     const email = userInfo.email;
 
     // Validate the user's email or perform any necessary operations

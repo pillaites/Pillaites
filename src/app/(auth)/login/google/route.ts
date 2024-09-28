@@ -8,6 +8,14 @@ const oauth2Client = new OAuth2Client(
   process.env.REDIRECT_URL
 );
 
+// Define an interface for the user information you expect from Google
+interface UserInfo {
+  id: string;
+  email: string;
+  name: string;
+  picture: string;
+}
+
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const code = url.searchParams.get("code");
@@ -30,8 +38,9 @@ export async function GET(request: Request) {
       },
     });
 
-    const userInfo = userInfoResponse.data;
-    const email = userInfo.email;
+    // Explicitly type the userInfoResponse.data as UserInfo
+    const userInfo = userInfoResponse.data as UserInfo;
+    const email = userInfo.email; // Now TypeScript knows userInfo has an email property
 
     const isEmailValid = await prisma.$transaction(async (tx) => {
       const invite = await tx.invite.findFirst({
